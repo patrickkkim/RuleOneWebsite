@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Entity
 @Table(name="app_user")
@@ -37,7 +37,7 @@ public class AppUser {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="created_date", columnDefinition =
             "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private java.util.Date createdDate;
+    private Instant createdDate;
 
     @Column(name="is_active", columnDefinition = "BOOLEAN NOT NULL DEFAULT 1")
     private boolean isActive;
@@ -86,11 +86,11 @@ public class AppUser {
         this.email = email;
     }
 
-    public Date getCreatedDate() {
+    public Instant getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
     }
 

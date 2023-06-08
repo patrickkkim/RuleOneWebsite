@@ -1,11 +1,10 @@
 package com.valueinvesting.ruleone.entities;
 
 import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -14,24 +13,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @DataJpaTest
-class UserTest {
+@ExtendWith(MockitoExtension.class)
+class AppUserTest {
 
     @Autowired private TestEntityManager testEntityManager;
     @Mock private Subscription subscription;
-    private AutoCloseable autoCloseable;
-
-    @BeforeEach
-    void setUp() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        autoCloseable.close();
-    }
 
     @Test
-    void itShouldCheckIfUserCanBeInserted() {
+    void checkIfUserCanBeInserted() {
         String name = "honggildong";
         String password = "asdfasdfasdfasdf";
         String email = "asdf@naver.com";
@@ -40,11 +29,11 @@ class UserTest {
         int id = testEntityManager.persist(appUser).getId();
         AppUser newUser = testEntityManager.find(AppUser.class, id);
 
-        assertThat(newUser).isSameAs(appUser);
+        assertThat(newUser).isEqualTo(appUser);
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenEmailIsWrong() {
+    void checkIfUserCantBeInsertedWhenEmailIsWrong() {
         String name = "honggildong";
         String password = "asdfasdfasdfasdf";
         String email = "aaaaa@.";
@@ -58,7 +47,7 @@ class UserTest {
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenUsernameIsShort() {
+    void checkIfUserCantBeInsertedWhenUsernameIsShort() {
         String name = "asdf";
         String password = "asdfasdfasdfasdf";
         String email = "asdf@naver.com";
@@ -72,7 +61,7 @@ class UserTest {
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenPasswordIsBlank() {
+    void checkIfUserCantBeInsertedWhenPasswordIsBlank() {
         String name = "honggildong";
         String password = "";
         String email = "asdf@naver.com";
@@ -86,7 +75,7 @@ class UserTest {
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenPasswordIsNull() {
+    void checkIfUserCantBeInsertedWhenPasswordIsNull() {
         String name = "honggildong";
         String password = null;
         String email = "asdf@naver.com";
