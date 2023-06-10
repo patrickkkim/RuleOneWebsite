@@ -42,16 +42,11 @@ public class AppUser {
     @Column(name="is_active", columnDefinition = "BOOLEAN NOT NULL DEFAULT 1")
     private boolean isActive;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="subscription_id", columnDefinition = "INT NOT NULL")
-    private Subscription subscription;
-
     public AppUser() {}
-    public AppUser(@NotNull String username, String password, @NotNull String email, @NotNull Subscription subscription) {
+    public AppUser(@NotNull String username, String password, @NotNull String email) {
         this.username = username;
         this.encrypted_password = password;
         this.email = email;
-        this.subscription = subscription;
     }
 
     public int getId() {
@@ -102,14 +97,6 @@ public class AppUser {
         isActive = active;
     }
 
-    public Subscription getSubscription() {
-        return subscription;
-    }
-
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
-    }
-
     @Override
     public String toString() {
         return "AppUser{" +
@@ -119,7 +106,6 @@ public class AppUser {
                 ", email='" + email + '\'' +
                 ", createdDate=" + createdDate +
                 ", isActive=" + isActive +
-                ", subscription=" + subscription +
                 '}';
     }
 }

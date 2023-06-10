@@ -13,18 +13,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @DataJpaTest
-@ExtendWith(MockitoExtension.class)
 class AppUserTest {
 
     @Autowired private TestEntityManager testEntityManager;
-    @Mock private Subscription subscription;
 
     @Test
     void checkIfUserCanBeInserted() {
         String name = "honggildong";
         String password = "asdfasdfasdfasdf";
         String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+        AppUser appUser = new AppUser(name, password, email);
 
         int id = testEntityManager.persist(appUser).getId();
         AppUser newUser = testEntityManager.find(AppUser.class, id);
@@ -37,7 +35,7 @@ class AppUserTest {
         String name = "honggildong";
         String password = "asdfasdfasdfasdf";
         String email = "aaaaa@.";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+        AppUser appUser = new AppUser(name, password, email);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -51,7 +49,7 @@ class AppUserTest {
         String name = "asdf";
         String password = "asdfasdfasdfasdf";
         String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+        AppUser appUser = new AppUser(name, password, email);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -65,7 +63,7 @@ class AppUserTest {
         String name = "honggildong";
         String password = "";
         String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+        AppUser appUser = new AppUser(name, password, email);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -79,7 +77,7 @@ class AppUserTest {
         String name = "honggildong";
         String password = null;
         String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+        AppUser appUser = new AppUser(name, password, email);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {

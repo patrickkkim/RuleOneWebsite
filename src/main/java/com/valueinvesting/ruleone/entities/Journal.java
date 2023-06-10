@@ -56,13 +56,15 @@ public class Journal {
     private AppUser appUser;
 
     public Journal() {}
-    public Journal(String tickerSymbol, @NotNull Instant journalDate, boolean isBought, float stockPrice, int stockAmount, String jsonBigFiveNumber, @NotNull AppUser appUser) {
+
+    public Journal(String tickerSymbol, @NotNull Instant journalDate, boolean isBought, float stockPrice, int stockAmount, String jsonBigFiveNumber, @NotNull String memo, @NotNull AppUser appUser) {
         this.tickerSymbol = tickerSymbol;
         this.journalDate = journalDate;
         this.isBought = isBought;
         this.stockPrice = stockPrice;
         this.stockAmount = stockAmount;
         this.jsonBigFiveNumber = jsonBigFiveNumber;
+        this.memo = memo;
         this.appUser = appUser;
     }
 

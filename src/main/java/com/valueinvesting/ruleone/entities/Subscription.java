@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 
@@ -24,12 +25,19 @@ public class Subscription {
     @Column(name="purchase_type", columnDefinition = "VARCHAR(50) NULL")
     private String purchaseType;
 
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="app_user_id", columnDefinition = "INT NOT NULL")
+    private AppUser appUser;
+
     public Subscription() {}
 
-    public Subscription(Instant subscribedDate, Instant endDate, String purchaseType) {
+    public Subscription(Instant subscribedDate, Instant endDate,
+                        String purchaseType, @NotNull AppUser appUser) {
         this.subscribedDate = subscribedDate;
         this.endDate = endDate;
         this.purchaseType = purchaseType;
+        this.appUser = appUser;
     }
 
     public int getId() {
@@ -64,6 +72,14 @@ public class Subscription {
         this.purchaseType = purchaseType;
     }
 
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
+    }
+
     @Override
     public String toString() {
         return "Subscription{" +
@@ -71,6 +87,7 @@ public class Subscription {
                 ", subscribedDate=" + subscribedDate +
                 ", endDate=" + endDate +
                 ", purchaseType='" + purchaseType + '\'' +
+                ", appUser=" + appUser +
                 '}';
     }
 }
