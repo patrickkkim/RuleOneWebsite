@@ -24,7 +24,7 @@ class SubscriptionTest {
     void checkIfSubscriptionCanBeInserted() {
         AppUser appUser = new AppUser();
         appUser.setEmail("a@a.com");
-        appUser.setEncrypted_password("asdfasdfasdfasf");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setAppUser(appUser);
@@ -39,7 +39,7 @@ class SubscriptionTest {
     void checkIfSubscriptionCanBeInsertedWithSubscribedDate() {
         AppUser appUser = new AppUser();
         appUser.setEmail("a@a.com");
-        appUser.setEncrypted_password("asdfasdfasdfasf");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setAppUser(appUser);
@@ -56,7 +56,7 @@ class SubscriptionTest {
     void checkIfSubscriptionCanBeInsertedWithEndDate() {
         AppUser appUser = new AppUser();
         appUser.setEmail("a@a.com");
-        appUser.setEncrypted_password("asdfasdfasdfasf");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setAppUser(appUser);
@@ -73,7 +73,7 @@ class SubscriptionTest {
     void checkIfSubscriptionCanBeInsertedWithPurchaseType() {
         AppUser appUser = new AppUser();
         appUser.setEmail("a@a.com");
-        appUser.setEncrypted_password("asdfasdfasdfasf");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setAppUser(appUser);

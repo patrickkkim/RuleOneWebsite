@@ -32,7 +32,7 @@ class JournalTest {
         String memo = "This is a memo!";
         AppUser appUser = new AppUser();
         appUser.setEmail("a@a.com");
-        appUser.setEncrypted_password("asdfasdfasdfasf");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
         Journal journal = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
@@ -55,7 +55,7 @@ class JournalTest {
         String memo = "This is a memo!";
         AppUser appUser = new AppUser();
         appUser.setEmail("a@a.com");
-        appUser.setEncrypted_password("asdfasdfasdfasf");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
         Journal journal = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
@@ -79,7 +79,7 @@ class JournalTest {
         String memo = "This is a memo!";
         AppUser appUser = new AppUser();
         appUser.setEmail("a@a.com");
-        appUser.setEncrypted_password("asdfasdfasdfasf");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
         Journal journal1 = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
