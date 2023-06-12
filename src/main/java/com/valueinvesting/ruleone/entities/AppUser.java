@@ -25,7 +25,7 @@ public class AppUser {
 
     @NotBlank
     @Column(name="encrypted_password", columnDefinition = "VARCHAR(100) NOT NULL")
-    private String encrypted_password;
+    private String encryptedPassword;
 
     @NotNull
     @Size(min=4)
@@ -45,7 +45,7 @@ public class AppUser {
     public AppUser() {}
     public AppUser(@NotNull String username, String password, @NotNull String email) {
         this.username = username;
-        this.encrypted_password = password;
+        this.encryptedPassword = password;
         this.email = email;
     }
 
@@ -65,12 +65,12 @@ public class AppUser {
         this.username = username;
     }
 
-    public String getEncrypted_password() {
-        return encrypted_password;
+    public String getEncryptedPassword() {
+        return encryptedPassword;
     }
 
-    public void setEncrypted_password(String encrypted_password) {
-        this.encrypted_password = encrypted_password;
+    public void setEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
     }
 
     public String getEmail() {
@@ -102,7 +102,7 @@ public class AppUser {
         return "AppUser{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", encrypted_password='" + encrypted_password + '\'' +
+                ", encryptedPassword='" + encryptedPassword + '\'' +
                 ", email='" + email + '\'' +
                 ", createdDate=" + createdDate +
                 ", isActive=" + isActive +
