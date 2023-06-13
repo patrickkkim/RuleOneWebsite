@@ -1,5 +1,7 @@
 package com.valueinvesting.ruleone.entities;
 
+import jakarta.validation.ConstraintViolationException;
+import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.time.Instant;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
 
 @DataJpaTest
@@ -27,6 +30,7 @@ class SubscriptionTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
+        subscription.setSubscriptionType("trial");
         subscription.setAppUser(appUser);
 
         int id = testEntityManager.persist(subscription).getId();
@@ -42,6 +46,7 @@ class SubscriptionTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
+        subscription.setSubscriptionType("trial");
         subscription.setAppUser(appUser);
         Instant date = Instant.now();
         subscription.setSubscribedDate(date);
@@ -59,6 +64,7 @@ class SubscriptionTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
+        subscription.setSubscriptionType("trial");
         subscription.setAppUser(appUser);
         Instant date = Instant.now();
         subscription.setEndDate(date);
@@ -76,6 +82,7 @@ class SubscriptionTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
+        subscription.setSubscriptionType("trial");
         subscription.setAppUser(appUser);
         String purchaseType = "paypal";
         subscription.setPurchaseType(purchaseType);
@@ -84,5 +91,23 @@ class SubscriptionTest {
         String newPurchaseType = testEntityManager.find(Subscription.class, id).getPurchaseType();
 
         assertThat(newPurchaseType).isEqualTo(purchaseType);
+    }
+
+    @Test
+    void checkIfSubscriptionCantBeInsertedWithWrongSubscriptionType() {
+        AppUser appUser = new AppUser();
+        appUser.setEmail("a@a.com");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
+        appUser.setUsername("honggildong");
+        Subscription subscription = new Subscription();
+        subscription.setAppUser(appUser);
+        String subscriptionType = "whatever";
+        subscription.setSubscriptionType(subscriptionType);
+
+        assertThatExceptionOfType(DataException.class)
+                .isThrownBy(() -> {
+                    testEntityManager.persist(subscription);
+                })
+                .withMessageContaining("Value not permitted for column");
     }
 }
