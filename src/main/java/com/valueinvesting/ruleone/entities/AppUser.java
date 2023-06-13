@@ -24,7 +24,8 @@ public class AppUser {
     private String username;
 
     @NotBlank
-    @Column(name="encrypted_password", columnDefinition = "VARCHAR(100) NOT NULL")
+    @Column(name="encrypted_password",
+            columnDefinition = "VARCHAR(100) NOT NULL CHECK (LENGTH() >= 10)")
     private String encryptedPassword;
 
     @NotNull
