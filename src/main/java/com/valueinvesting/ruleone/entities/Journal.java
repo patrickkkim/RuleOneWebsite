@@ -21,12 +21,6 @@ public class Journal {
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="journal_date", columnDefinition =
-            "TIMESTAMP NOT NULL")
-    private Instant journalDate;
-
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="last_edit_date", columnDefinition =
             "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Instant lastEditDate = Instant.now();
@@ -57,9 +51,8 @@ public class Journal {
 
     public Journal() {}
 
-    public Journal(String tickerSymbol, @NotNull Instant journalDate, boolean isBought, float stockPrice, int stockAmount, String jsonBigFiveNumber, @NotNull String memo, @NotNull AppUser appUser) {
+    public Journal(String tickerSymbol, boolean isBought, float stockPrice, int stockAmount, String jsonBigFiveNumber, @NotNull String memo, @NotNull AppUser appUser) {
         this.tickerSymbol = tickerSymbol;
-        this.journalDate = journalDate;
         this.isBought = isBought;
         this.stockPrice = stockPrice;
         this.stockAmount = stockAmount;
@@ -82,14 +75,6 @@ public class Journal {
 
     public void setTickerSymbol(String tickerSymbol) {
         this.tickerSymbol = tickerSymbol;
-    }
-
-    public Instant getJournalDate() {
-        return journalDate;
-    }
-
-    public void setJournalDate(Instant journalDate) {
-        this.journalDate = journalDate;
     }
 
     public Instant getLastEditDate() {
@@ -153,7 +138,6 @@ public class Journal {
         return "Journal{" +
                 "id=" + id +
                 ", tickerSymbol='" + tickerSymbol + '\'' +
-                ", journalDate=" + journalDate +
                 ", lastEditDate=" + lastEditDate +
                 ", isBought=" + isBought +
                 ", stockPrice=" + stockPrice +

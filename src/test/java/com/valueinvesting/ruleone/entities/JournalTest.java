@@ -22,7 +22,6 @@ class JournalTest {
     @Test
     void checkIfJournalCanBeInserted() {
         String tickerSymbol = "AAPL";
-        Instant journalDate = Instant.now();
         boolean isBought = true;
         float stockPrice = (float)280.95;
         int stockAmount = 25;
@@ -35,7 +34,7 @@ class JournalTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
-        Journal journal = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
+        Journal journal = new Journal(tickerSymbol, isBought, stockPrice,
                 stockAmount, jsonBigFiveNumber, memo, appUser);
 
         int id = testEntityManager.persist(journal).getId();
@@ -47,7 +46,6 @@ class JournalTest {
     @Test
     void checkIfJournalCantBeInsertedWhenJSONIsBlank() {
         String tickerSymbol = "AAPL";
-        Instant journalDate = Instant.now();
         boolean isBought = true;
         float stockPrice = (float)280.95;
         int stockAmount = 25;
@@ -58,7 +56,7 @@ class JournalTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
-        Journal journal = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
+        Journal journal = new Journal(tickerSymbol, isBought, stockPrice,
                 stockAmount, jsonBigFiveNumber, memo, appUser);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
@@ -69,7 +67,6 @@ class JournalTest {
     @Test
     void CheckIfMultipleJournalCanBeInsertedWithSingleAppUser() {
         String tickerSymbol = "AAPL";
-        Instant journalDate = Instant.now();
         boolean isBought = true;
         float stockPrice = (float)280.95;
         int stockAmount = 25;
@@ -82,9 +79,9 @@ class JournalTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
-        Journal journal1 = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
+        Journal journal1 = new Journal(tickerSymbol, isBought, stockPrice,
                 stockAmount, jsonBigFiveNumber, memo, appUser);
-        Journal journal2 = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
+        Journal journal2 = new Journal(tickerSymbol, isBought, stockPrice,
                 stockAmount, jsonBigFiveNumber, memo, appUser);
 
         AppUser appUser1 = testEntityManager.persist(journal1).getAppUser();
@@ -96,7 +93,6 @@ class JournalTest {
     @Test
     void CheckIfJournalUpdatesLastEditDateWhenItsUpdated() {
         String tickerSymbol = "AAPL";
-        Instant journalDate = Instant.now();
         boolean isBought = true;
         float stockPrice = (float)280.95;
         int stockAmount = 25;
@@ -109,7 +105,7 @@ class JournalTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
-        Journal journal = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
+        Journal journal = new Journal(tickerSymbol, isBought, stockPrice,
                 stockAmount, jsonBigFiveNumber, memo, appUser);
         Instant previousLastEditDate = Instant.now();
         journal.setLastEditDate(previousLastEditDate);
