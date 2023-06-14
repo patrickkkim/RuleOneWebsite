@@ -92,4 +92,35 @@ class JournalTest {
 
         assertThat(appUser1).isEqualTo(appUser2);
     }
+
+    @Test
+    void CheckIfJournalUpdatesLastEditDateWhenItsUpdated() {
+        String tickerSymbol = "AAPL";
+        Instant journalDate = Instant.now();
+        boolean isBought = true;
+        float stockPrice = (float)280.95;
+        int stockAmount = 25;
+        String jsonBigFiveNumber = "{'roic': {'2023-01-10': '20.2', '2023-01-11': '23.65'}" +
+                "'fcf': {'2023-01-10': '2.55', '2023-01-11': '6.45'}" +
+                "}";
+        String memo = "This is a memo!";
+        AppUser appUser = new AppUser();
+        appUser.setEmail("a@a.com");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
+        appUser.setUsername("honggildong");
+
+        Journal journal = new Journal(tickerSymbol, journalDate, isBought, stockPrice,
+                stockAmount, jsonBigFiveNumber, memo, appUser);
+        Instant previousLastEditDate = Instant.now();
+        journal.setLastEditDate(previousLastEditDate);
+        int id = testEntityManager.persist(journal).getId();
+        Journal found = testEntityManager.find(Journal.class, id);
+        found.setBought(false);
+        testEntityManager.flush();
+        testEntityManager.clear();
+
+        found = testEntityManager.find(Journal.class, id);
+
+        assertThat(found.getLastEditDate()).isNotEqualTo(previousLastEditDate);
+    }
 }
