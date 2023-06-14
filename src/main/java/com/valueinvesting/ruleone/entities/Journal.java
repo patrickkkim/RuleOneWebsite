@@ -25,12 +25,15 @@ public class Journal {
             "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Instant lastEditDate = Instant.now();
 
+    @NotNull
     @Column(name="is_bought", columnDefinition = "BOOLEAN NOT NULL")
     private boolean isBought;
 
+    @NotNull
     @Column(name="stock_price", columnDefinition = "FLOAT NOT NULL")
     private float stockPrice;
 
+    @NotNull
     @Column(name="stock_amount", columnDefinition = "INT NOT NULL")
     private int stockAmount;
 
