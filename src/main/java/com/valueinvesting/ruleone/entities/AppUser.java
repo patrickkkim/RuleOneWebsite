@@ -35,10 +35,11 @@ public class AppUser {
             "VARCHAR(255) NOT NULL CHECK (LENGTH() >= 4)")
     private String email;
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="created_date", columnDefinition =
             "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Instant createdDate;
+    private Instant createdDate = Instant.now();
 
     @Column(name="is_active", columnDefinition = "BOOLEAN NOT NULL DEFAULT 1")
     private boolean isActive;
