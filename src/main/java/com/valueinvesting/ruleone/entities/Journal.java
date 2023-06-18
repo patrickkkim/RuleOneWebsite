@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
+import java.util.Map;
 
 @Entity
 @Table(name="journal")
@@ -37,9 +38,10 @@ public class Journal {
     @Column(name="stock_amount", columnDefinition = "INT NOT NULL")
     private int stockAmount;
 
-    @NotBlank
+    @NotNull
+    @Convert(converter = HashMapConverter.class)
     @Column(name="json_big_five_number", columnDefinition = "JSON NOT NULL")
-    private String jsonBigFiveNumber;
+    private Map<String, Object> jsonBigFiveNumber;
 
     @NotNull
     @Column(name="memo", columnDefinition =
@@ -54,7 +56,7 @@ public class Journal {
 
     public Journal() {}
 
-    public Journal(String tickerSymbol, boolean isBought, float stockPrice, int stockAmount, String jsonBigFiveNumber, @NotNull String memo, @NotNull AppUser appUser) {
+    public Journal(String tickerSymbol, boolean isBought, float stockPrice, int stockAmount, Map<String, Object> jsonBigFiveNumber, @NotNull String memo, @NotNull AppUser appUser) {
         this.tickerSymbol = tickerSymbol;
         this.isBought = isBought;
         this.stockPrice = stockPrice;
@@ -112,11 +114,11 @@ public class Journal {
         this.stockAmount = stockAmount;
     }
 
-    public String getJsonBigFiveNumber() {
+    public Map<String, Object> getJsonBigFiveNumber() {
         return jsonBigFiveNumber;
     }
 
-    public void setJsonBigFiveNumber(String jsonBigFiveNumber) {
+    public void setJsonBigFiveNumber(Map<String, Object> jsonBigFiveNumber) {
         this.jsonBigFiveNumber = jsonBigFiveNumber;
     }
 

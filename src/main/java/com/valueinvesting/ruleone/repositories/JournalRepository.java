@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Map;
 import java.util.Optional;
 
 public interface JournalRepository extends JpaRepository<Journal, Integer> {
@@ -29,7 +30,7 @@ public interface JournalRepository extends JpaRepository<Journal, Integer> {
 
     @Modifying
     @Query("UPDATE Journal j SET j.jsonBigFiveNumber = :json WHERE j.id = :id")
-    void updateJsonBigFiveNumberById(@Param("id") int id, @Param("json") String json);
+    void updateJsonBigFiveNumberById(@Param("id") int id, @Param("json") Map<String, Object> json);
 
     @Modifying
     @Query("UPDATE Journal j SET j.memo = :memo WHERE j.id = :id")

@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class JournalRepositoryTest {
@@ -33,9 +34,27 @@ class JournalRepositoryTest {
         journal.setTickerSymbol("AAPL");
         journal.setStockPrice((float) 208.85);
         journal.setStockAmount(23);
-        journal.setJsonBigFiveNumber("{'roic': {'2023-01-10': '20.2', '2023-01-11': '23.65'}," +
-                "'fcf': {'2023-01-10': '2.55', '2023-01-11': '6.45'}" +
-                "}");
+        Map<String, String> roic = new HashMap<>();
+        Map<String, String> sales = new HashMap<>();
+        Map<String, String> eps = new HashMap<>();
+        Map<String, String> equity = new HashMap<>();
+        Map<String, String> fcf = new HashMap<>();
+        for (int i = 0; i < 10; ++i) {
+            String date = "2023-01-0" + i;
+            roic.put(date, String.valueOf(i));
+            sales.put(date, String.valueOf(i));
+            eps.put(date, String.valueOf(i));
+            equity.put(date, String.valueOf(i));
+            fcf.put(date, String.valueOf(i));
+        }
+        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put("roic", roic);
+        bigFiveNumbers.put("sales", sales);
+        bigFiveNumbers.put("eps", eps);
+        bigFiveNumbers.put("equity", equity);
+        bigFiveNumbers.put("fcf", fcf);
+
+        journal.setJsonBigFiveNumber(bigFiveNumbers);
         journal.setMemo("This is a memo!");
     }
 
@@ -99,16 +118,32 @@ class JournalRepositoryTest {
 
     @Test
     void checkIfUpdatedJsonBigFiveNumberById() {
-        String newJson = "{'roic': {'2023-01-10': '20.9', '2023-01-11': '28.8'}," +
-                "'fcf': {'2023-01-10': '2.123', '2023-01-11': '5.0'}" +
-                "}";
+        Map<String, String> roic = new HashMap<>();
+        Map<String, String> sales = new HashMap<>();
+        Map<String, String> eps = new HashMap<>();
+        Map<String, String> equity = new HashMap<>();
+        Map<String, String> fcf = new HashMap<>();
+        for (int i = 0; i < 10; ++i) {
+            String date = "2023-01-1" + i;
+            roic.put(date, String.valueOf(i));
+            sales.put(date, String.valueOf(i));
+            eps.put(date, String.valueOf(i));
+            equity.put(date, String.valueOf(i));
+            fcf.put(date, String.valueOf(i));
+        }
+        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put("roic", roic);
+        bigFiveNumbers.put("sales", sales);
+        bigFiveNumbers.put("eps", eps);
+        bigFiveNumbers.put("equity", equity);
+        bigFiveNumbers.put("fcf", fcf);
 
         int id = underTest.save(journal).getId();
-        underTest.updateJsonBigFiveNumberById(id, newJson);
+        underTest.updateJsonBigFiveNumberById(id, bigFiveNumbers);
         testEntityManager.refresh(journal);
         Journal found = underTest.findById(id).get();
 
-        assertThat(found.getJsonBigFiveNumber()).isEqualTo(newJson);
+        assertThat(found.getJsonBigFiveNumber()).isEqualTo(bigFiveNumbers);
     }
 
     @Test
