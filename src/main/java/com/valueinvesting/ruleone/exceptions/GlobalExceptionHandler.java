@@ -21,6 +21,22 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT.value(), e.getMessage(), Instant.now()
         );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AuthorityAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistException(AuthorityAlreadyExistException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(), e.getMessage(), Instant.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AuthorityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistException(AuthorityNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(), e.getMessage(), Instant.now()
+        );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
