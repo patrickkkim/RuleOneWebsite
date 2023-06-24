@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Subscription;
+import com.valueinvesting.ruleone.entities.SubscriptionType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,7 +26,7 @@ class SubscriptionRepositoryTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
-        subscription.setSubscriptionType("trial");
+        subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
 
         underTest.save(subscription);
@@ -42,7 +43,7 @@ class SubscriptionRepositoryTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
-        subscription.setSubscriptionType("trial");
+        subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
 
         underTest.save(subscription);
@@ -57,16 +58,15 @@ class SubscriptionRepositoryTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
-        subscription.setSubscriptionType("trial");
+        subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
-        String newSubscriptionType = "essential";
 
         int id = underTest.save(subscription).getId();
-        underTest.updateSubscriptionTypeById(id, newSubscriptionType);
+        underTest.updateSubscriptionTypeById(id, SubscriptionType.ESSENTIAL);
         testEntityManager.refresh(subscription);
 
         Subscription found = underTest.findById(id).get();
-        assertThat(found.getSubscriptionType()).isEqualTo(newSubscriptionType);
+        assertThat(found.getSubscriptionType()).isEqualTo(SubscriptionType.ESSENTIAL);
     }
 
     @Test
@@ -76,7 +76,7 @@ class SubscriptionRepositoryTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
-        subscription.setSubscriptionType("trial");
+        subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
         subscription.setSubscribedDate(Instant.now());
         Instant newSubscribedDate = Instant.ofEpochSecond(Instant.now().getEpochSecond() + 100000);
@@ -96,7 +96,7 @@ class SubscriptionRepositoryTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
-        subscription.setSubscriptionType("trial");
+        subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
         subscription.setEndDate(Instant.now());
         Instant newEndDate = Instant.ofEpochSecond(Instant.now().getEpochSecond() + 100000);
@@ -116,7 +116,7 @@ class SubscriptionRepositoryTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
-        subscription.setSubscriptionType("trial");
+        subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
         String newPurchaseType = "paypal";
 

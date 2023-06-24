@@ -15,9 +15,10 @@ public class Subscription {
     private int id;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name="subscription_type",
-            columnDefinition = "ENUM('trial', 'essential', 'premium') NOT NULL DEFAULT 'trial'")
-    private String subscriptionType;
+            columnDefinition = "ENUM('TRIAL', 'ESSENTIAL', 'PREMIUM') NOT NULL DEFAULT 'TRIAL'")
+    private SubscriptionType subscriptionType = SubscriptionType.TRIAL;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="subscribed_date", columnDefinition = "TIMESTAMP NULL")
@@ -37,7 +38,7 @@ public class Subscription {
 
     public Subscription() {}
 
-    public Subscription(@NotNull String subscriptionType, Instant subscribedDate, Instant endDate,
+    public Subscription(@NotNull SubscriptionType subscriptionType, Instant subscribedDate, Instant endDate,
                         String purchaseType, @NotNull AppUser appUser) {
         this.subscriptionType = subscriptionType;
         this.subscribedDate = subscribedDate;
@@ -54,11 +55,11 @@ public class Subscription {
         this.id = id;
     }
 
-    public String getSubscriptionType() {
+    public SubscriptionType getSubscriptionType() {
         return subscriptionType;
     }
 
-    public void setSubscriptionType(@NotNull String subscriptionType) {
+    public void setSubscriptionType(@NotNull SubscriptionType subscriptionType) {
         this.subscriptionType = subscriptionType;
     }
 

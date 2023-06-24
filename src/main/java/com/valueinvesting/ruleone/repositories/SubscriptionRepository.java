@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.Subscription;
+import com.valueinvesting.ruleone.entities.SubscriptionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
     @Modifying
     @Query("UPDATE Subscription s SET s.subscriptionType = :type WHERE s.id = :id")
     void updateSubscriptionTypeById(@Param("id") int id,
-                                  @Param("type")String type);
+                                  @Param("type") SubscriptionType type);
 
     @Modifying
     @Query("UPDATE Subscription s SET s.subscribedDate = :subscribedDate WHERE s.id = :id")
