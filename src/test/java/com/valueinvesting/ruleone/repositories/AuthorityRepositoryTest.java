@@ -57,4 +57,18 @@ class AuthorityRepositoryTest {
 
         assertThat(optional.get().getAuthority()).isEqualTo(AuthorityType.PREMIUM);
     }
+
+    @Test
+    void checkIfDoesNotUpdatesAuthorityByIdWhenAuthorityIsNotAllowed() {
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        authority.setAuthority(AuthorityType.ESSENTIAL);
+
+        underTest.save(authority);
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> {
+                    underTest.updateAuthorityById(authority.getId(), null);
+                }).withMessageContaining("NULL not allowed");
+    }
 }

@@ -1,5 +1,6 @@
 package com.valueinvesting.ruleone.entities;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.time.Instant;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 
 @DataJpaTest
@@ -86,5 +88,22 @@ class SubscriptionTest {
         String newPurchaseType = testEntityManager.find(Subscription.class, id).getPurchaseType();
 
         assertThat(newPurchaseType).isEqualTo(purchaseType);
+    }
+
+    @Test
+    void checkIfSubscriptionCantBeInsertedWithWrongSubscriptionType() {
+        AppUser appUser = new AppUser();
+        appUser.setEmail("a@a.com");
+        appUser.setEncryptedPassword("asdfasdfasdfasf");
+        appUser.setUsername("honggildong");
+        Subscription subscription = new Subscription();
+        subscription.setAppUser(appUser);
+        subscription.setSubscriptionType(null);
+
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> {
+                    testEntityManager.persist(subscription);
+                })
+                .withMessageContaining("must not be null");
     }
 }

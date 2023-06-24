@@ -1,5 +1,6 @@
 package com.valueinvesting.ruleone.entities;
 
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,5 +48,17 @@ class AuthorityTest {
         Authority newAuthority = testEntityManager.find(Authority.class, id);
 
         assertThat(newAuthority.getAuthority()).isEqualTo(AuthorityType.TRIAL);
+    }
+
+    @Test
+    void checkIfOtherAuthorityCannotBeInserted() {
+        Authority authority = new Authority();
+        authority.setAuthority(null);
+        authority.setAppUser(appUser);
+
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> {
+                    testEntityManager.persist(authority);
+                }).withMessageContaining("must not be null");
     }
 }
