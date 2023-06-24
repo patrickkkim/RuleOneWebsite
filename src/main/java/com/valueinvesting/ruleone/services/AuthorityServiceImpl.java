@@ -62,6 +62,9 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Transactional
     @Override
     public void updateAuthorityByAppUser(AppUser appUser, AuthorityType authority) {
+        if (authority == AuthorityType.ADMIN) {
+            throw new RuntimeException("Authority ADMIN type is not allowed to be changed");
+        }
         Optional<Authority> optional = authorityRepository.findByAppUserId(appUser.getId());
         if (optional.isPresent()) {
             Authority authorityObject = optional.get();
