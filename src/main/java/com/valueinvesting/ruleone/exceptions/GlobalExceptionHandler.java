@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorityAlreadyExistException.class)
-    public ResponseEntity<ErrorResponse> handleUserAlreadyExistException(AuthorityAlreadyExistException e) {
+    public ResponseEntity<ErrorResponse> handleAuthorityAlreadyExistException(AuthorityAlreadyExistException e) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT.value(), e.getMessage(), Instant.now()
         );
@@ -33,7 +33,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserAlreadyExistException(AuthorityNotFoundException e) {
+    public ResponseEntity<ErrorResponse> handleAuthorityNotFoundException(AuthorityNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(), e.getMessage(), Instant.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SubscriptionAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleSubscriptionAlreadyExistException(SubscriptionAlreadyExistException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(), e.getMessage(), Instant.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(SubscriptionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSubscriptionNotFoundException(SubscriptionNotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(), e.getMessage(), Instant.now()
         );
