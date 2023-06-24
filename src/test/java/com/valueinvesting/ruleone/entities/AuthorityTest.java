@@ -29,7 +29,7 @@ class AuthorityTest {
     @Test
     void checkIfAuthorityCanBeInserted() {
         Authority authority = new Authority();
-        authority.setAuthority("ESSENTIAL");
+        authority.setAuthority(AuthorityType.ESSENTIAL);
         authority.setAppUser(appUser);
 
         int id = testEntityManager.persist(authority).getId();
@@ -46,18 +46,6 @@ class AuthorityTest {
         int id = testEntityManager.persist(authority).getId();
         Authority newAuthority = testEntityManager.find(Authority.class, id);
 
-        assertThat(newAuthority.getAuthority()).isEqualTo("TRIAL");
-    }
-
-    @Test
-    void checkIfOtherAuthorityCannotBeInserted() {
-        Authority authority = new Authority();
-        authority.setAuthority("OTHER");
-        authority.setAppUser(appUser);
-
-        assertThatExceptionOfType(DataException.class)
-                .isThrownBy(() -> {
-                    testEntityManager.persist(authority);
-                }).withMessageContaining("Value not permitted for column");
+        assertThat(newAuthority.getAuthority()).isEqualTo(AuthorityType.TRIAL);
     }
 }

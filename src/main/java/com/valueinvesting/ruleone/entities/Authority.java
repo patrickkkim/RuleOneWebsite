@@ -13,9 +13,10 @@ public class Authority {
     private int id;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name="authority", columnDefinition =
             "ENUM('TRIAL', 'ESSENTIAL', 'PREMIUM', 'ADMIN') NOT NULL DEFAULT 'TRIAL'")
-    private String authority = "TRIAL";
+    private AuthorityType authority = AuthorityType.TRIAL;
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
@@ -23,7 +24,7 @@ public class Authority {
     private AppUser appUser;
 
     public Authority() {}
-    public Authority(@NotNull String authority, @NotNull AppUser appUser) {
+    public Authority(@NotNull AuthorityType authority, @NotNull AppUser appUser) {
         this.authority = authority;
         this.appUser = appUser;
     }
@@ -36,11 +37,11 @@ public class Authority {
         this.id = id;
     }
 
-    public String getAuthority() {
+    public AuthorityType getAuthority() {
         return authority;
     }
 
-    public void setAuthority(String authority) {
+    public void setAuthority(AuthorityType authority) {
         this.authority = authority;
     }
 

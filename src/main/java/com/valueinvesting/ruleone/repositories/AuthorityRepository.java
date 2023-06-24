@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.Authority;
+import com.valueinvesting.ruleone.entities.AuthorityType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,5 +14,5 @@ public interface AuthorityRepository extends JpaRepository<Authority, Integer> {
 
     @Modifying
     @Query("UPDATE Authority a SET a.authority = :auth WHERE a.id = :id")
-    void updateAuthorityById(@Param("id") int id, @Param("auth") String authority);
+    void updateAuthorityById(@Param("id") int id, @Param("auth") AuthorityType authority);
 }

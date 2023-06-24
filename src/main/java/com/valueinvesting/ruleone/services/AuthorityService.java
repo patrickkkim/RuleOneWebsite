@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Authority;
+import com.valueinvesting.ruleone.entities.AuthorityType;
 
 public interface AuthorityService {
     Authority createAuthority(Authority authority);
@@ -10,5 +11,5 @@ public interface AuthorityService {
 
     Authority getAuthorityByAppUser(AppUser appUser);
 
-    void updateAuthorityByAppUser(AppUser appUser, String authority);
+    void updateAuthorityByAppUser(AppUser appUser, AuthorityType authority);
 }

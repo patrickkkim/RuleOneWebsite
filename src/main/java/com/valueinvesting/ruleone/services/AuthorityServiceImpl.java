@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Authority;
+import com.valueinvesting.ruleone.entities.AuthorityType;
 import com.valueinvesting.ruleone.exceptions.AuthorityAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.AuthorityNotFoundException;
 import com.valueinvesting.ruleone.repositories.AuthorityRepository;
@@ -60,7 +61,7 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @Transactional
     @Override
-    public void updateAuthorityByAppUser(AppUser appUser, String authority) {
+    public void updateAuthorityByAppUser(AppUser appUser, AuthorityType authority) {
         Optional<Authority> optional = authorityRepository.findByAppUserId(appUser.getId());
         if (optional.isPresent()) {
             Authority authorityObject = optional.get();

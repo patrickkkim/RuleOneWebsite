@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Authority;
+import com.valueinvesting.ruleone.entities.AuthorityType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ class AuthorityRepositoryTest {
     void checkIfFindsByAppUserId() {
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        authority.setAuthority("ESSENTIAL");
+        authority.setAuthority(AuthorityType.ESSENTIAL);
 
         underTest.save(authority);
         Optional<Authority> optional = underTest.findByAppUserId(appUser.getId());
@@ -47,27 +48,13 @@ class AuthorityRepositoryTest {
     void checkIfUpdatesAuthorityById() {
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        authority.setAuthority("ESSENTIAL");
+        authority.setAuthority(AuthorityType.ESSENTIAL);
 
         underTest.save(authority);
-        underTest.updateAuthorityById(authority.getId(), "PREMIUM");
+        underTest.updateAuthorityById(authority.getId(), AuthorityType.PREMIUM);
         testEntityManager.refresh(authority);
         Optional<Authority> optional = underTest.findById(authority.getId());
 
-        assertThat(optional.get().getAuthority()).isEqualTo("PREMIUM");
-    }
-
-    @Test
-    void checkIfDoesNotUpdatesAuthorityByIdWhenAuthorityIsNotAllowed() {
-        Authority authority = new Authority();
-        authority.setAppUser(appUser);
-        authority.setAuthority("ESSENTIAL");
-
-        underTest.save(authority);
-
-        assertThatExceptionOfType(DataIntegrityViolationException.class)
-                .isThrownBy(() -> {
-                    underTest.updateAuthorityById(authority.getId(), "OTHER");
-                }).withMessageContaining("Value not permitted for column");
+        assertThat(optional.get().getAuthority()).isEqualTo(AuthorityType.PREMIUM);
     }
 }
