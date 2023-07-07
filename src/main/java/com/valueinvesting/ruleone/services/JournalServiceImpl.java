@@ -5,6 +5,7 @@ import com.valueinvesting.ruleone.entities.Journal;
 import com.valueinvesting.ruleone.exceptions.JournalAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.JournalNotFoundException;
 import com.valueinvesting.ruleone.repositories.JournalRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class JournalServiceImpl implements JournalService {
         this.journalRepository = journalRepository;
     }
 
+    @Transactional
     @Override
     public Journal createJournal(Journal journal) {
         Optional<Journal> optional = journalRepository.findById(journal.getId());
@@ -36,6 +38,7 @@ public class JournalServiceImpl implements JournalService {
         return journalRepository.findJournalByAppUserId(appUser.getId());
     }
 
+    @Transactional
     @Override
     public void updateJsonBigFiveNumberByJournalId(int journalId, Map<String, Object> jsonBigFiveNumber) {
         Optional<Journal> optional = journalRepository.findById(journalId);
@@ -45,6 +48,7 @@ public class JournalServiceImpl implements JournalService {
         journalRepository.updateJsonBigFiveNumberById(journalId, jsonBigFiveNumber);
     }
 
+    @Transactional
     @Override
     public void updateMemoByJournalId(int journalId, String memo) {
         Optional<Journal> optional = journalRepository.findById(journalId);

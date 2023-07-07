@@ -6,6 +6,7 @@ import com.valueinvesting.ruleone.entities.SubscriptionType;
 import com.valueinvesting.ruleone.exceptions.SubscriptionAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.SubscriptionNotFoundException;
 import com.valueinvesting.ruleone.repositories.SubscriptionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         this.subscriptionRepository = subscriptionRepository;
     }
 
+    @Transactional
     @Override
     public Subscription createSubscription(Subscription subscription) {
         Optional<Subscription> optionalId = subscriptionRepository.findById(subscription.getId());
@@ -59,6 +61,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return optional.get();
     }
 
+    @Transactional
     @Override
     public void updateSubscriptionTypeByAppUser(AppUser appUser, SubscriptionType subscriptionType) {
         Optional<Subscription> optional = subscriptionRepository.findByAppUserId(appUser.getId());
@@ -71,6 +74,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.updateSubscriptionTypeById(optional.get().getId(), subscriptionType);
     }
 
+    @Transactional
     @Override
     public void updateSubscribedDateByAppUser(AppUser appUser, Instant date) {
         Optional<Subscription> optional = subscriptionRepository.findByAppUserId(appUser.getId());
@@ -83,6 +87,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.updateSubscribedDateById(optional.get().getId(), date);
     }
 
+    @Transactional
     @Override
     public void updateEndDateByAppUser(AppUser appUser, Instant date) {
         Optional<Subscription> optional = subscriptionRepository.findByAppUserId(appUser.getId());
@@ -95,6 +100,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.updateEndDateById(optional.get().getId(), date);
     }
 
+    @Transactional
     @Override
     public void updatePurchaseTypeByAppUser(AppUser appUser, String purchaseType) {
         Optional<Subscription> optional = subscriptionRepository.findByAppUserId(appUser.getId());
