@@ -56,6 +56,22 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(JournalNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleJournalNotFoundException(JournalNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(), e.getMessage(), Instant.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(JournalAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleJournalAlreadyExistException(JournalAlreadyExistException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(), e.getMessage(), Instant.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
         ErrorResponse errorResponse = new ErrorResponse(
