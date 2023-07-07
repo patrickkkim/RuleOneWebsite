@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface JournalRepository extends JpaRepository<Journal, Integer> {
-    Optional<Journal> findJournalByAppUserId(int app_user_id);
+    List<Journal> findJournalByAppUserId(int app_user_id);
 
     @Modifying
     @Query("UPDATE Journal j SET j.tickerSymbol = :tickerSymbol WHERE j.id = :id")
