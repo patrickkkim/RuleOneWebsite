@@ -147,18 +147,59 @@ class JournalRepositoryTest {
         underTest.save(journal2);
 
         Pageable pageable = PageRequest.of(0, 1);
-        Page<Journal> page1 = underTest.findJournalByAppUserId(
-                appUser.getId(), pageable);
+        Page<Journal> page1 = underTest.findJournalByAppUserId(appUser.getId(), pageable);
         pageable = PageRequest.of(1, 1);
-        Page<Journal> page2 = underTest.findJournalByAppUserId(
-                appUser.getId(), pageable);
-
+        Page<Journal> page2 = underTest.findJournalByAppUserId(appUser.getId(), pageable);
         assertThat(page1.getContent().get(0)).isEqualTo(journal);
         assertThat(page2.getContent().get(0)).isEqualTo(journal2);
         assertThatExceptionOfType(IndexOutOfBoundsException.class)
                 .isThrownBy(() -> {
                     page1.getContent().get(1);
                 });
+    }
+
+    @Test
+    void checkIfFindsAllByAppUserId() {
+        underTest.save(journal);
+
+        AppUser appUser2 = new AppUser();
+        appUser2.setUsername("honggilddong2");
+        appUser2.setEmail("b@b.com");
+        appUser2.setEncryptedPassword("asdfasdfasdfasdf");
+
+        Journal journal2 = new Journal();
+        journal2.setAppUser(appUser2);
+        journal2.setBought(true);
+        journal2.setTickerSymbol("META");
+        journal2.setStockPrice((float) 208.85);
+        journal2.setStockAmount(23);
+        Map<String, String> roic = new HashMap<>();
+        Map<String, String> sales = new HashMap<>();
+        Map<String, String> eps = new HashMap<>();
+        Map<String, String> equity = new HashMap<>();
+        Map<String, String> fcf = new HashMap<>();
+        for (int i = 0; i < 10; ++i) {
+            String date = "2023-01-0" + i;
+            roic.put(date, String.valueOf(i));
+            sales.put(date, String.valueOf(i));
+            eps.put(date, String.valueOf(i));
+            equity.put(date, String.valueOf(i));
+            fcf.put(date, String.valueOf(i));
+        }
+        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put("roic", roic);
+        bigFiveNumbers.put("sales", sales);
+        bigFiveNumbers.put("eps", eps);
+        bigFiveNumbers.put("equity", equity);
+        bigFiveNumbers.put("fcf", fcf);
+        journal2.setJsonBigFiveNumber(bigFiveNumbers);
+        journal2.setMemo("This is a memo!");
+
+        underTest.save(journal2);
+
+        List<Journal> journalList = underTest.findAllByAppUserId(appUser2.getId());
+        assertThat(journalList.size() == 1).isTrue();
+        assertThat(journalList.get(0).getAppUser()).isEqualTo(appUser2);
     }
 
     @Test

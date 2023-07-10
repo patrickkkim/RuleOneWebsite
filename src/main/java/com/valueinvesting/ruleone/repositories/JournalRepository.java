@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface JournalRepository extends JpaRepository<Journal, Integer> {
-    Page<Journal> findJournalByAppUserId(int app_user_id, Pageable pageable);
+    Page<Journal> findJournalByAppUserId(int appUserId, Pageable pageable);
+
+    List<Journal> findAllByAppUserId(int appUserId);
 
     @Modifying
     @Query("UPDATE Journal j SET j.tickerSymbol = :tickerSymbol WHERE j.id = :id")
