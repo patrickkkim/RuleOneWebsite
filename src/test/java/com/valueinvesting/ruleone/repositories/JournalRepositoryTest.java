@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @DataJpaTest
 class JournalRepositoryTest {
@@ -62,7 +66,8 @@ class JournalRepositoryTest {
     @Test
     void checkIfFindsJournalByAppUserId() {
         int id = underTest.save(journal).getAppUser().getId();
-        List<Journal> journalList = underTest.findJournalByAppUserId(id);
+        Pageable pageable = PageRequest.of(0, 3);
+        List<Journal> journalList = underTest.findJournalByAppUserId(id, pageable).getContent();
 
         assertThat(journalList.get(0)).isEqualTo(journal);
     }
@@ -101,9 +106,59 @@ class JournalRepositoryTest {
 
         underTest.save(journal2);
 
-        List<Journal> journalList = underTest.findJournalByAppUserId(appUser.getId());
+        Pageable pageable = PageRequest.of(0, 3);
+        List<Journal> journalList = underTest.findJournalByAppUserId(appUser.getId(), pageable).getContent();
         assertThat(journalList.get(0)).isEqualTo(journal);
         assertThat(journalList.get(1)).isEqualTo(journal2);
+    }
+
+    @Test
+    void checkIfPaginatesMultipleJournalByAppUserId() {
+        AppUser appUser = underTest.save(journal).getAppUser();
+
+        Journal journal2 = new Journal();
+        journal2.setAppUser(appUser);
+        journal2.setBought(true);
+        journal2.setTickerSymbol("META");
+        journal2.setStockPrice((float) 208.85);
+        journal2.setStockAmount(23);
+        Map<String, String> roic = new HashMap<>();
+        Map<String, String> sales = new HashMap<>();
+        Map<String, String> eps = new HashMap<>();
+        Map<String, String> equity = new HashMap<>();
+        Map<String, String> fcf = new HashMap<>();
+        for (int i = 0; i < 10; ++i) {
+            String date = "2023-01-0" + i;
+            roic.put(date, String.valueOf(i));
+            sales.put(date, String.valueOf(i));
+            eps.put(date, String.valueOf(i));
+            equity.put(date, String.valueOf(i));
+            fcf.put(date, String.valueOf(i));
+        }
+        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put("roic", roic);
+        bigFiveNumbers.put("sales", sales);
+        bigFiveNumbers.put("eps", eps);
+        bigFiveNumbers.put("equity", equity);
+        bigFiveNumbers.put("fcf", fcf);
+        journal2.setJsonBigFiveNumber(bigFiveNumbers);
+        journal2.setMemo("This is a memo!");
+
+        underTest.save(journal2);
+
+        Pageable pageable = PageRequest.of(0, 1);
+        Page<Journal> page1 = underTest.findJournalByAppUserId(
+                appUser.getId(), pageable);
+        pageable = PageRequest.of(1, 1);
+        Page<Journal> page2 = underTest.findJournalByAppUserId(
+                appUser.getId(), pageable);
+
+        assertThat(page1.getContent().get(0)).isEqualTo(journal);
+        assertThat(page2.getContent().get(0)).isEqualTo(journal2);
+        assertThatExceptionOfType(IndexOutOfBoundsException.class)
+                .isThrownBy(() -> {
+                    page1.getContent().get(1);
+                });
     }
 
     @Test
