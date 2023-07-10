@@ -72,6 +72,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(JournalInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleJournalInvalidException(JournalInvalidException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(), e.getMessage(), Instant.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
         ErrorResponse errorResponse = new ErrorResponse(
