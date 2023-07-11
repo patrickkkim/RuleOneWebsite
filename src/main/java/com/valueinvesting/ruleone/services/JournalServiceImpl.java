@@ -47,12 +47,47 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     public float computeROICGrowthRate(List<Float> roicList, int years) {
-        return 0;
+        /*
+        ???
+        Identify the historical net income of the company. This information can be obtained from the company's financial statements, such as the income statement.
+
+        Determine the company's average net fixed assets, which includes property, plant, and equipment (PP&E), and other long-term assets. This information is typically available in the company's balance sheet.
+
+        Calculate the average ROIC over a specific period, usually the past 10 years. The formula for calculating average ROIC is:
+
+        Average ROIC = Average Net Income / Average Net Fixed Assets
+
+        Here, "Average Net Income" refers to the average of the net income values over the selected period, and "Average Net Fixed Assets" refers to the average of the net fixed assets values over the same period.
+
+        Calculate the growth rate of ROIC using the following formula:
+
+        ROIC Growth Rate = (Current ROIC / Average ROIC)^(1/n) - 1
+
+        Here, "Current ROIC" refers to the most recent ROIC value available, "Average ROIC" represents the average ROIC calculated in step 3, and "n" represents the number of years in the selected period.
+
+        The formula calculates the compound annual growth rate (CAGR) of ROIC over the specified period.
+
+         */
+
+        float sum = 0.0f, avg;
+        for (Float roic : roicList) {
+            sum += roic;
+        }
+        avg = sum / roicList.size();
+        return avg;
     }
 
     @Override
     public float computeGrowthRate(float previousValue, float currentValue, int years) {
-        return 0;
+        float growth = 0.0f;
+
+        if (previousValue < 0) previousValue = -previousValue;
+        if (currentValue < 0) currentValue = -currentValue;
+
+        float doubles = (float) Math.log(currentValue / previousValue);
+        float double_years = years / doubles;
+        growth = 72.0f / double_years;
+        return growth;
     }
 
     @Override
