@@ -34,7 +34,7 @@ public interface JournalRepository extends JpaRepository<Journal, Integer> {
 
     @Modifying
     @Query("UPDATE Journal j SET j.jsonBigFiveNumber = :json WHERE j.id = :id")
-    void updateJsonBigFiveNumberById(@Param("id") int id, @Param("json") Map<String, Object> json);
+    void updateJsonBigFiveNumberById(@Param("id") int id, @Param("json") Map<String, List<Double>> json);
 
     @Modifying
     @Query("UPDATE Journal j SET j.memo = :memo WHERE j.id = :id")

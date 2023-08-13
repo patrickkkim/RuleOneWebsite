@@ -10,7 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -30,20 +32,19 @@ class JournalTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
 
-        Map<String, String> roic = new HashMap<>();
-        Map<String, String> sales = new HashMap<>();
-        Map<String, String> eps = new HashMap<>();
-        Map<String, String> equity = new HashMap<>();
-        Map<String, String> fcf = new HashMap<>();
+        List<Double> roic = new ArrayList<>();
+        List<Double> sales = new ArrayList<>();
+        List<Double> eps = new ArrayList<>();
+        List<Double> equity = new ArrayList<>();
+        List<Double> fcf = new ArrayList<>();
         for (int i = 0; i < 10; ++i) {
-            String date = "2023-01-0" + i;
-            roic.put(date, String.valueOf(i));
-            sales.put(date, String.valueOf(i));
-            eps.put(date, String.valueOf(i));
-            equity.put(date, String.valueOf(i));
-            fcf.put(date, String.valueOf(i));
+            roic.add((double) i);
+            sales.add((double) i);
+            eps.add((double) i);
+            equity.add((double) i);
+            fcf.add((double) i);
         }
-        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
         bigFiveNumbers.put("roic", roic);
         bigFiveNumbers.put("sales", sales);
         bigFiveNumbers.put("eps", eps);
@@ -69,20 +70,19 @@ class JournalTest {
 
     @Test
     void checkIfJsonBigFiveNumberIsInsertedCorrectly() {
-        Map<String, String> roic = new HashMap<>();
-        Map<String, String> sales = new HashMap<>();
-        Map<String, String> eps = new HashMap<>();
-        Map<String, String> equity = new HashMap<>();
-        Map<String, String> fcf = new HashMap<>();
+        List<Double> roic = new ArrayList<>();
+        List<Double> sales = new ArrayList<>();
+        List<Double> eps = new ArrayList<>();
+        List<Double> equity = new ArrayList<>();
+        List<Double> fcf = new ArrayList<>();
         for (int i = 0; i < 10; ++i) {
-            String date = "2023-01-0" + i;
-            roic.put(date, String.valueOf(i));
-            sales.put(date, String.valueOf(i));
-            eps.put(date, String.valueOf(i));
-            equity.put(date, String.valueOf(i));
-            fcf.put(date, String.valueOf(i));
+            roic.add((double) i);
+            sales.add((double) i);
+            eps.add((double) i);
+            equity.add((double) i);
+            fcf.add((double) i);
         }
-        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
         bigFiveNumbers.put("roic", roic);
         bigFiveNumbers.put("sales", sales);
         bigFiveNumbers.put("eps", eps);

@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Journal;
+import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
@@ -39,20 +37,19 @@ class JournalRepositoryTest {
         journal.setTickerSymbol("AAPL");
         journal.setStockPrice((float) 208.85);
         journal.setStockAmount(23);
-        Map<String, String> roic = new HashMap<>();
-        Map<String, String> sales = new HashMap<>();
-        Map<String, String> eps = new HashMap<>();
-        Map<String, String> equity = new HashMap<>();
-        Map<String, String> fcf = new HashMap<>();
+        List<Double> roic = new ArrayList<>();
+        List<Double> sales = new ArrayList<>();
+        List<Double> eps = new ArrayList<>();
+        List<Double> equity = new ArrayList<>();
+        List<Double> fcf = new ArrayList<>();
         for (int i = 0; i < 10; ++i) {
-            String date = "2023-01-0" + i;
-            roic.put(date, String.valueOf(i));
-            sales.put(date, String.valueOf(i));
-            eps.put(date, String.valueOf(i));
-            equity.put(date, String.valueOf(i));
-            fcf.put(date, String.valueOf(i));
+            roic.add((double) i);
+            sales.add((double) i);
+            eps.add((double) i);
+            equity.add((double) i);
+            fcf.add((double) i);
         }
-        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
         bigFiveNumbers.put("roic", roic);
         bigFiveNumbers.put("sales", sales);
         bigFiveNumbers.put("eps", eps);
@@ -82,26 +79,7 @@ class JournalRepositoryTest {
         journal2.setTickerSymbol("META");
         journal2.setStockPrice((float) 208.85);
         journal2.setStockAmount(23);
-        Map<String, String> roic = new HashMap<>();
-        Map<String, String> sales = new HashMap<>();
-        Map<String, String> eps = new HashMap<>();
-        Map<String, String> equity = new HashMap<>();
-        Map<String, String> fcf = new HashMap<>();
-        for (int i = 0; i < 10; ++i) {
-            String date = "2023-01-0" + i;
-            roic.put(date, String.valueOf(i));
-            sales.put(date, String.valueOf(i));
-            eps.put(date, String.valueOf(i));
-            equity.put(date, String.valueOf(i));
-            fcf.put(date, String.valueOf(i));
-        }
-        Map<String, Object> bigFiveNumbers = new HashMap<>();
-        bigFiveNumbers.put("roic", roic);
-        bigFiveNumbers.put("sales", sales);
-        bigFiveNumbers.put("eps", eps);
-        bigFiveNumbers.put("equity", equity);
-        bigFiveNumbers.put("fcf", fcf);
-        journal2.setJsonBigFiveNumber(bigFiveNumbers);
+        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
         journal2.setMemo("This is a memo!");
 
         underTest.save(journal2);
@@ -122,26 +100,7 @@ class JournalRepositoryTest {
         journal2.setTickerSymbol("META");
         journal2.setStockPrice((float) 208.85);
         journal2.setStockAmount(23);
-        Map<String, String> roic = new HashMap<>();
-        Map<String, String> sales = new HashMap<>();
-        Map<String, String> eps = new HashMap<>();
-        Map<String, String> equity = new HashMap<>();
-        Map<String, String> fcf = new HashMap<>();
-        for (int i = 0; i < 10; ++i) {
-            String date = "2023-01-0" + i;
-            roic.put(date, String.valueOf(i));
-            sales.put(date, String.valueOf(i));
-            eps.put(date, String.valueOf(i));
-            equity.put(date, String.valueOf(i));
-            fcf.put(date, String.valueOf(i));
-        }
-        Map<String, Object> bigFiveNumbers = new HashMap<>();
-        bigFiveNumbers.put("roic", roic);
-        bigFiveNumbers.put("sales", sales);
-        bigFiveNumbers.put("eps", eps);
-        bigFiveNumbers.put("equity", equity);
-        bigFiveNumbers.put("fcf", fcf);
-        journal2.setJsonBigFiveNumber(bigFiveNumbers);
+        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
         journal2.setMemo("This is a memo!");
 
         underTest.save(journal2);
@@ -173,26 +132,7 @@ class JournalRepositoryTest {
         journal2.setTickerSymbol("META");
         journal2.setStockPrice((float) 208.85);
         journal2.setStockAmount(23);
-        Map<String, String> roic = new HashMap<>();
-        Map<String, String> sales = new HashMap<>();
-        Map<String, String> eps = new HashMap<>();
-        Map<String, String> equity = new HashMap<>();
-        Map<String, String> fcf = new HashMap<>();
-        for (int i = 0; i < 10; ++i) {
-            String date = "2023-01-0" + i;
-            roic.put(date, String.valueOf(i));
-            sales.put(date, String.valueOf(i));
-            eps.put(date, String.valueOf(i));
-            equity.put(date, String.valueOf(i));
-            fcf.put(date, String.valueOf(i));
-        }
-        Map<String, Object> bigFiveNumbers = new HashMap<>();
-        bigFiveNumbers.put("roic", roic);
-        bigFiveNumbers.put("sales", sales);
-        bigFiveNumbers.put("eps", eps);
-        bigFiveNumbers.put("equity", equity);
-        bigFiveNumbers.put("fcf", fcf);
-        journal2.setJsonBigFiveNumber(bigFiveNumbers);
+        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
         journal2.setMemo("This is a memo!");
 
         underTest.save(journal2);
@@ -252,20 +192,19 @@ class JournalRepositoryTest {
 
     @Test
     void checkIfUpdatedJsonBigFiveNumberById() {
-        Map<String, String> roic = new HashMap<>();
-        Map<String, String> sales = new HashMap<>();
-        Map<String, String> eps = new HashMap<>();
-        Map<String, String> equity = new HashMap<>();
-        Map<String, String> fcf = new HashMap<>();
-        for (int i = 0; i < 10; ++i) {
-            String date = "2023-01-1" + i;
-            roic.put(date, String.valueOf(i));
-            sales.put(date, String.valueOf(i));
-            eps.put(date, String.valueOf(i));
-            equity.put(date, String.valueOf(i));
-            fcf.put(date, String.valueOf(i));
+        List<Double> roic = new ArrayList<>();
+        List<Double> sales = new ArrayList<>();
+        List<Double> eps = new ArrayList<>();
+        List<Double> equity = new ArrayList<>();
+        List<Double> fcf = new ArrayList<>();
+        for (int i = 10; i < 20; ++i) {
+            roic.add((double) i);
+            sales.add((double) i);
+            eps.add((double) i);
+            equity.add((double) i);
+            fcf.add((double) i);
         }
-        Map<String, Object> bigFiveNumbers = new HashMap<>();
+        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
         bigFiveNumbers.put("roic", roic);
         bigFiveNumbers.put("sales", sales);
         bigFiveNumbers.put("eps", eps);
@@ -277,7 +216,8 @@ class JournalRepositoryTest {
         testEntityManager.refresh(journal);
         Journal found = underTest.findById(id).get();
 
-        assertThat(found.getJsonBigFiveNumber()).isEqualTo(bigFiveNumbers);
+        assertThat(found.getJsonBigFiveNumber().get("roic").get(0))
+                .isCloseTo(10.0f, Percentage.withPercentage(99));
     }
 
     @Test

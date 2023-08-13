@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
 import com.valueinvesting.ruleone.exceptions.JournalAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.JournalInvalidException;
@@ -46,31 +47,9 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
-    public float computeROICGrowthRate(List<Float> roicList, int years) {
-        /*
-        ???
-        Identify the historical net income of the company. This information can be obtained from the company's financial statements, such as the income statement.
-
-        Determine the company's average net fixed assets, which includes property, plant, and equipment (PP&E), and other long-term assets. This information is typically available in the company's balance sheet.
-
-        Calculate the average ROIC over a specific period, usually the past 10 years. The formula for calculating average ROIC is:
-
-        Average ROIC = Average Net Income / Average Net Fixed Assets
-
-        Here, "Average Net Income" refers to the average of the net income values over the selected period, and "Average Net Fixed Assets" refers to the average of the net fixed assets values over the same period.
-
-        Calculate the growth rate of ROIC using the following formula:
-
-        ROIC Growth Rate = (Current ROIC / Average ROIC)^(1/n) - 1
-
-        Here, "Current ROIC" refers to the most recent ROIC value available, "Average ROIC" represents the average ROIC calculated in step 3, and "n" represents the number of years in the selected period.
-
-        The formula calculates the compound annual growth rate (CAGR) of ROIC over the specified period.
-
-         */
-
+    public float computeROICAverage(List<Double> roicList) {
         float sum = 0.0f, avg;
-        for (Float roic : roicList) {
+        for (Double roic : roicList) {
             sum += roic;
         }
         avg = sum / roicList.size();
@@ -91,7 +70,9 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
-    public Map<String, Object> getBigFiveGrowthNumbers(@NotNull Map<String, Object> bigFiveNumbers) {
+    public Map<String, Object> getBigFiveGrowthRates(@NotNull Map<String, List<Double>> bigFiveNumbers) {
+        Map<String, Float> bigFiveGrowthRate = new HashMap<>();
+        // List<Float> roicList = bigFiveNumbers.get(BigFiveNumberType.ROIC);
         return null;
     }
 
@@ -119,7 +100,7 @@ public class JournalServiceImpl implements JournalService {
 
     @Transactional
     @Override
-    public void updateJsonBigFiveNumberByJournalId(int journalId, Map<String, Object> jsonBigFiveNumber) {
+    public void updateJsonBigFiveNumberByJournalId(int journalId, Map<String, List<Double>> jsonBigFiveNumber) {
         Optional<Journal> optional = journalRepository.findById(journalId);
         if (optional.isEmpty()) {
             throw new JournalNotFoundException("Journal not found with ID: " + journalId);
