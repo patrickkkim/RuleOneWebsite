@@ -26,16 +26,4 @@ class JournalServiceTest {
     void setUp() {
         underTest = new JournalServiceImpl(journalRepository);
     }
-
-    @Disabled
-    @Test
-    void checkIfComputesROICGrowthRate() {
-        List<Double> roicList = new ArrayList<>();
-        int years = 10;
-        for (int i = 1; i < years; ++i) {
-            roicList.add((double) i);
-        }
-
-        assertThat(underTest.computeROICAverage(roicList)).isCloseTo(0.9f, Percentage.withPercentage(99));
-    }
 }

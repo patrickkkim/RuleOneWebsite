@@ -11,14 +11,6 @@ import java.util.Map;
 public interface JournalService {
     Journal createJournal(@NotNull Journal journal);
 
-    float computeROICAverage(List<Double> roicList);
-
-    float computeGrowthRate(float previousValue, float currentValue, int years);
-
-    Map<String, Object> getBigFiveGrowthRates(@NotNull Map<String, List<Double>> bigFiveNumbers);
-
-    float getStickerPrice(Map<String, Object> bigFiveGrowthNumbers);
-
     Page<Journal> getPaginatedJournals(@NotNull AppUser appUser, int page, int size);
 
     Map<String, Object> getTotalStockPercentage(@NotNull AppUser appUser);

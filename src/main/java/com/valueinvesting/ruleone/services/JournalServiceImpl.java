@@ -1,7 +1,6 @@
 package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
-import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
 import com.valueinvesting.ruleone.exceptions.JournalAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.JournalInvalidException;
@@ -15,10 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class JournalServiceImpl implements JournalService {
@@ -44,41 +40,6 @@ public class JournalServiceImpl implements JournalService {
             throw new JournalInvalidException("Stock amount should be bigger than 0");
         }
         return journalRepository.save(journal);
-    }
-
-    @Override
-    public float computeROICAverage(List<Double> roicList) {
-        float sum = 0.0f, avg;
-        for (Double roic : roicList) {
-            sum += roic;
-        }
-        avg = sum / roicList.size();
-        return avg;
-    }
-
-    @Override
-    public float computeGrowthRate(float previousValue, float currentValue, int years) {
-        float growth = 0.0f;
-
-        if (previousValue < 0) previousValue = -previousValue;
-        if (currentValue < 0) currentValue = -currentValue;
-
-        float doubles = (float) Math.log(currentValue / previousValue);
-        float double_years = years / doubles;
-        growth = 72.0f / double_years;
-        return growth;
-    }
-
-    @Override
-    public Map<String, Object> getBigFiveGrowthRates(@NotNull Map<String, List<Double>> bigFiveNumbers) {
-        Map<String, Float> bigFiveGrowthRate = new HashMap<>();
-        // List<Float> roicList = bigFiveNumbers.get(BigFiveNumberType.ROIC);
-        return null;
-    }
-
-    @Override
-    public float getStickerPrice(Map<String, Object> bigFiveGrowthNumbers) {
-        return 0;
     }
 
     @Override
