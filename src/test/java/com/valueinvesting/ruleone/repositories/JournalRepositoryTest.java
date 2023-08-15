@@ -217,7 +217,7 @@ class JournalRepositoryTest {
         Journal found = underTest.findById(id).get();
 
         assertThat(found.getJsonBigFiveNumber().get("roic").get(0))
-                .isCloseTo(10.0f, Percentage.withPercentage(99));
+                .isCloseTo(10.0f, Percentage.withPercentage(5));
     }
 
     @Test
