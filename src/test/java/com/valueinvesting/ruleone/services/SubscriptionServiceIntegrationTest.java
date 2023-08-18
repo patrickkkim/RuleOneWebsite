@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.Authority;
 import com.valueinvesting.ruleone.entities.Subscription;
 import com.valueinvesting.ruleone.entities.SubscriptionType;
 import com.valueinvesting.ruleone.exceptions.SubscriptionAlreadyExistException;
@@ -39,6 +40,9 @@ class SubscriptionServiceIntegrationTest {
         appUser.setUsername("honggildong");
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser.setAuthority(authority);
         subscription = new Subscription();
         subscription.setAppUser(appUser);
         subscription.setSubscribedDate(Instant.now());
@@ -116,6 +120,9 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setUsername("another");
         appUser2.setEmail("b@b.com");
         appUser2.setEncryptedPassword("asdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser2.setAuthority(authority);
         subscriptionRepository.save(subscription);
 
         assertThatExceptionOfType(SubscriptionNotFoundException.class)
@@ -141,6 +148,9 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setUsername("another");
         appUser2.setEmail("b@b.com");
         appUser2.setEncryptedPassword("asdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser2.setAuthority(authority);
         subscriptionRepository.save(subscription);
 
         assertThatExceptionOfType(SubscriptionNotFoundException.class)
@@ -167,6 +177,9 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setUsername("another");
         appUser2.setEmail("b@b.com");
         appUser2.setEncryptedPassword("asdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser2.setAuthority(authority);
         Instant newInstant = Instant.ofEpochSecond(Instant.now().getEpochSecond() + 100000);
         subscriptionRepository.save(subscription);
 
@@ -194,6 +207,9 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setUsername("another");
         appUser2.setEmail("b@b.com");
         appUser2.setEncryptedPassword("asdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser2.setAuthority(authority);
         Instant newInstant = Instant.ofEpochSecond(Instant.now().getEpochSecond() + 100000);
         subscriptionRepository.save(subscription);
 
@@ -220,6 +236,9 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setUsername("another");
         appUser2.setEmail("b@b.com");
         appUser2.setEncryptedPassword("asdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser2.setAuthority(authority);
         subscriptionRepository.save(subscription);
 
         assertThatExceptionOfType(SubscriptionNotFoundException.class)

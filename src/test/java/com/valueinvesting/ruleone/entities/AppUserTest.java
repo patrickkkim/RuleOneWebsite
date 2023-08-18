@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.entities;
 
 import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,14 +17,25 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 class AppUserTest {
 
     @Autowired private TestEntityManager testEntityManager;
+    AppUser appUser;
 
-    @Test
-    void checkIfUserCanBeInserted() {
+    @BeforeEach
+    void setUp() {
         String name = "honggildong";
         String password = "asdfasdfasdfasdf";
         String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email);
+        Authority authority = new Authority();
+        appUser = new AppUser();
+        appUser.setAuthority(authority);
+        authority.setAppUser(appUser);
+        authority.setAuthority(AuthorityType.ESSENTIAL);
+        appUser.setUsername(name);
+        appUser.setEmail(email);
+        appUser.setEncryptedPassword(password);
+    }
 
+    @Test
+    void checkIfUserCanBeInserted() {
         int id = testEntityManager.persist(appUser).getId();
         AppUser newUser = testEntityManager.find(AppUser.class, id);
 
@@ -32,10 +44,8 @@ class AppUserTest {
 
     @Test
     void checkIfUserCantBeInsertedWhenEmailIsWrong() {
-        String name = "honggildong";
-        String password = "asdfasdfasdfasdf";
         String email = "aaaaa@.";
-        AppUser appUser = new AppUser(name, password, email);
+        appUser.setEmail(email);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -47,9 +57,7 @@ class AppUserTest {
     @Test
     void checkIfUserCantBeInsertedWhenUsernameIsShort() {
         String name = "asdf";
-        String password = "asdfasdfasdfasdf";
-        String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email);
+        appUser.setUsername(name);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -60,10 +68,7 @@ class AppUserTest {
 
     @Test
     void checkIfUserCantBeInsertedWhenPasswordIsBlank() {
-        String name = "honggildong";
-        String password = "";
-        String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email);
+        appUser.setEncryptedPassword("");
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -74,10 +79,7 @@ class AppUserTest {
 
     @Test
     void checkIfUserCantBeInsertedWhenPasswordIsNull() {
-        String name = "honggildong";
-        String password = null;
-        String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email);
+        appUser.setEncryptedPassword(null);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {

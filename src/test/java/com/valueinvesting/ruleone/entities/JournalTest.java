@@ -31,6 +31,9 @@ class JournalTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
+        Authority authority = new Authority();
+        appUser.setAuthority(authority);
+        authority.setAppUser(appUser);
 
         List<Double> roic = new ArrayList<>();
         List<Double> sales = new ArrayList<>();

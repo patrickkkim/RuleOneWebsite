@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.Authority;
 import com.valueinvesting.ruleone.entities.Journal;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,9 @@ class JournalRepositoryTest {
         appUser.setUsername("honggilddong");
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser.setAuthority(authority);
 
         journal = new Journal();
         journal.setAppUser(appUser);
@@ -125,6 +129,9 @@ class JournalRepositoryTest {
         appUser2.setUsername("honggilddong2");
         appUser2.setEmail("b@b.com");
         appUser2.setEncryptedPassword("asdfasdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser2);
+        appUser2.setAuthority(authority);
 
         Journal journal2 = new Journal();
         journal2.setAppUser(appUser2);

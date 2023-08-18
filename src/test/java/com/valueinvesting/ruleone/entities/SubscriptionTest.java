@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.entities;
 
 import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,12 +21,21 @@ class SubscriptionTest {
 
     @Autowired private TestEntityManager testEntityManager;
 
-    @Test
-    void checkIfSubscriptionCanBeInserted() {
-        AppUser appUser = new AppUser();
+    AppUser appUser;
+
+    @BeforeEach
+    void setUp() {
+        appUser = new AppUser();
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
+        Authority authority = new Authority();
+        appUser.setAuthority(authority);
+        authority.setAppUser(appUser);
+    }
+
+    @Test
+    void checkIfSubscriptionCanBeInserted() {
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -38,10 +48,6 @@ class SubscriptionTest {
 
     @Test
     void checkIfSubscriptionCanBeInsertedWithSubscribedDate() {
-        AppUser appUser = new AppUser();
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasf");
-        appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -56,10 +62,6 @@ class SubscriptionTest {
 
     @Test
     void checkIfSubscriptionCanBeInsertedWithEndDate() {
-        AppUser appUser = new AppUser();
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasf");
-        appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -74,10 +76,6 @@ class SubscriptionTest {
 
     @Test
     void checkIfSubscriptionCanBeInsertedWithPurchaseType() {
-        AppUser appUser = new AppUser();
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasf");
-        appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -92,10 +90,6 @@ class SubscriptionTest {
 
     @Test
     void checkIfSubscriptionCantBeInsertedWithWrongSubscriptionType() {
-        AppUser appUser = new AppUser();
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasf");
-        appUser.setUsername("honggildong");
         Subscription subscription = new Subscription();
         subscription.setAppUser(appUser);
         subscription.setSubscriptionType(null);

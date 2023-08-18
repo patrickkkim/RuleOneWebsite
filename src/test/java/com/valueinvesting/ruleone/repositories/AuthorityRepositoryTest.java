@@ -34,6 +34,7 @@ class AuthorityRepositoryTest {
     @Test
     void checkIfFindsByAppUserId() {
         Authority authority = new Authority();
+        appUser.setAuthority(authority);
         authority.setAppUser(appUser);
         authority.setAuthority(AuthorityType.ESSENTIAL);
 
@@ -47,6 +48,7 @@ class AuthorityRepositoryTest {
     @Test
     void checkIfUpdatesAuthorityById() {
         Authority authority = new Authority();
+        appUser.setAuthority(authority);
         authority.setAppUser(appUser);
         authority.setAuthority(AuthorityType.ESSENTIAL);
 
@@ -61,6 +63,7 @@ class AuthorityRepositoryTest {
     @Test
     void checkIfDoesNotUpdatesAuthorityByIdWhenAuthorityIsNotAllowed() {
         Authority authority = new Authority();
+        appUser.setAuthority(authority);
         authority.setAppUser(appUser);
         authority.setAuthority(AuthorityType.ESSENTIAL);
 

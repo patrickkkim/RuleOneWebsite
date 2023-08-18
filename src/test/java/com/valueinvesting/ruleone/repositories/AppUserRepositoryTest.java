@@ -2,7 +2,9 @@ package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 
+import com.valueinvesting.ruleone.entities.Authority;
 import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,16 +23,25 @@ class AppUserRepositoryTest {
     @Autowired private TestEntityManager testEntityManager;
     @Autowired private AppUserRepository underTest;
 
-    @Test
-    void checkIfFoundByUsername() {
-        AppUser appUser = new AppUser();
+    AppUser appUser;
+
+    @BeforeEach
+    void setUp() {
+        appUser = new AppUser();
         String username = "honggildong";
         appUser.setUsername(username);
         appUser.setEmail("hong@gmail.com");
         appUser.setEncryptedPassword("asdfasdasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser.setAuthority(authority);
+    }
+
+    @Test
+    void checkIfFoundByUsername() {
         underTest.save(appUser);
 
-        Optional<AppUser> foundAppUserOptional = underTest.findByUsername(username);
+        Optional<AppUser> foundAppUserOptional = underTest.findByUsername("honggildong");
 
         assertThat(foundAppUserOptional.isPresent()).isTrue();
         AppUser found = foundAppUserOptional.get();
@@ -39,11 +50,6 @@ class AppUserRepositoryTest {
 
     @Test
     void checkIfNotFoundByUsername() {
-        AppUser appUser = new AppUser();
-        String username = "honggildong";
-        appUser.setUsername(username);
-        appUser.setEmail("hong@gmail.com");
-        appUser.setEncryptedPassword("asdfasdasdfasdf");
         underTest.save(appUser);
 
         Optional<AppUser> foundAppUserOptional = underTest.findByUsername("asdf");
@@ -53,10 +59,6 @@ class AppUserRepositoryTest {
 
     @Test
     void checkIfUpdatedPasswordById() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggildong");
-        appUser.setEmail("hong@gmail.com");
-        appUser.setEncryptedPassword("asdfasdasdfasdf");
         int id = underTest.save(appUser).getId();
 
         String newPassword = "newpassword";
@@ -69,10 +71,6 @@ class AppUserRepositoryTest {
 
     @Test
     void checkIfNotUpdatedPasswordByIdWhenPasswordIsNull() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggildong");
-        appUser.setEmail("hong@gmail.com");
-        appUser.setEncryptedPassword("asdfasdasdfasdf");
         int id = underTest.save(appUser).getId();
 
         String newPassword = null;
@@ -86,10 +84,6 @@ class AppUserRepositoryTest {
 
     @Test
     void checkIfUpdatedEmailById() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggildong");
-        appUser.setEmail("hong@gmail.com");
-        appUser.setEncryptedPassword("asdfasdasdfasdf");
         int id = underTest.save(appUser).getId();
 
         String newEmail = "asdf@naver.com";
@@ -102,10 +96,6 @@ class AppUserRepositoryTest {
 
     @Test
     void checkIfUpdatedActiveById() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggildong");
-        appUser.setEmail("hong@gmail.com");
-        appUser.setEncryptedPassword("asdfasdasdfasdf");
         int id = underTest.save(appUser).getId();
 
         boolean active = false;

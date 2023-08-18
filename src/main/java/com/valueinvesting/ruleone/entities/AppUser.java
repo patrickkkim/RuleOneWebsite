@@ -44,11 +44,17 @@ public class AppUser {
     @Column(name="is_active", columnDefinition = "BOOLEAN NOT NULL DEFAULT 1")
     private boolean isActive;
 
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="authority_id", columnDefinition = "INT NOT NULL")
+    private Authority authority;
+
     public AppUser() {}
-    public AppUser(@NotNull String username, String password, @NotNull String email) {
+    public AppUser(@NotNull String username, String password, @NotNull String email, @NotNull Authority authority) {
         this.username = username;
         this.encryptedPassword = password;
         this.email = email;
+        this.authority = authority;
     }
 
     public int getId() {
@@ -99,6 +105,14 @@ public class AppUser {
         isActive = active;
     }
 
+    public Authority getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(Authority authority) {
+        this.authority = authority;
+    }
+
     @Override
     public String toString() {
         return "AppUser{" +
@@ -108,6 +122,7 @@ public class AppUser {
                 ", email='" + email + '\'' +
                 ", createdDate=" + createdDate +
                 ", isActive=" + isActive +
+                ", authority=" + authority +
                 '}';
     }
 }

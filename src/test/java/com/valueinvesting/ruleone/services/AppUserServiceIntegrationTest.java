@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.Authority;
 import com.valueinvesting.ruleone.exceptions.UserAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.UserNotFoundException;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
@@ -40,6 +41,9 @@ class AppUserServiceIntegrationTest {
         appUser.setUsername("honggildong");
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("test123");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser.setAuthority(authority);
     }
 
     @Test

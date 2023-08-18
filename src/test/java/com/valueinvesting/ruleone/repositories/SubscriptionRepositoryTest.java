@@ -1,8 +1,10 @@
 package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.Authority;
 import com.valueinvesting.ruleone.entities.Subscription;
 import com.valueinvesting.ruleone.entities.SubscriptionType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,13 +20,21 @@ class SubscriptionRepositoryTest {
 
     @Autowired private TestEntityManager testEntityManager;
     @Autowired private SubscriptionRepository underTest;
+    AppUser appUser;
 
-    @Test
-    void checkIfFoundByAppUserId() {
-        AppUser appUser = new AppUser();
+    @BeforeEach
+    void setUp() {
+        appUser = new AppUser();
         appUser.setUsername("honggilddong");
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser.setAuthority(authority);
+    }
+
+    @Test
+    void checkIfFoundByAppUserId() {
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -38,10 +48,6 @@ class SubscriptionRepositoryTest {
 
     @Test
     void checkIfNotFoundByAppUserId() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggilddong");
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -53,10 +59,6 @@ class SubscriptionRepositoryTest {
 
     @Test
     void updateSubscriptionTypeById() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggilddong");
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -71,10 +73,6 @@ class SubscriptionRepositoryTest {
 
     @Test
     void updateSubscribedDateById() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggilddong");
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -91,10 +89,6 @@ class SubscriptionRepositoryTest {
 
     @Test
     void updateEndDateById() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggilddong");
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);
@@ -111,10 +105,6 @@ class SubscriptionRepositoryTest {
 
     @Test
     void updatePurchaseTypeById() {
-        AppUser appUser = new AppUser();
-        appUser.setUsername("honggilddong");
-        appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionType(SubscriptionType.TRIAL);
         subscription.setAppUser(appUser);

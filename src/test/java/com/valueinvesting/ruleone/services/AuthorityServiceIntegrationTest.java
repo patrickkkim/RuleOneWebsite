@@ -39,6 +39,7 @@ class AuthorityServiceIntegrationTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("123123123");
         authority = new Authority();
+        appUser.setAuthority(authority);
         authority.setAppUser(appUser);
     }
 

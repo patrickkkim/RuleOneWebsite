@@ -30,6 +30,7 @@ class AuthorityTest {
     @Test
     void checkIfAuthorityCanBeInserted() {
         Authority authority = new Authority();
+        appUser.setAuthority(authority);
         authority.setAuthority(AuthorityType.ESSENTIAL);
         authority.setAppUser(appUser);
 
@@ -42,6 +43,7 @@ class AuthorityTest {
     @Test
     void checkIfAuthorityDefaultValueIsWorking() {
         Authority authority = new Authority();
+        appUser.setAuthority(authority);
         authority.setAppUser(appUser);
 
         int id = testEntityManager.persist(authority).getId();
