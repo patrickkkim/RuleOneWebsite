@@ -8,155 +8,115 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Service
 public class GrowthRateServiceImpl implements GrowthRateService {
     @Override
     public double computeROICAverage(List<Double> roicList) {
+        if (roicList.size() == 0) throw new IllegalArgumentException("ROIC list is empty");
+
+        roicList = roicList.subList(1, roicList.size());
         double sum = 0.0, avg;
+        int nullCount = 0;
         for (Double roic : roicList) {
-            sum += roic;
+            if (roic == null) nullCount++;
+            else sum += roic;
         }
-        avg = sum / roicList.size();
+        avg = sum / (roicList.size() - nullCount);
         return avg;
     }
 
-    @Override
-    public double computeGrowthRate(double previousValue, double currentValue, int years) {
+    @Override // Can return NaN
+    public double computeGrowthRate(List<Double> dataList) {
+        if (dataList.size() <= 1) throw new IllegalArgumentException("Data list is smaller than 2");
+
+        int years = dataList.size()-1;
+        Double currentValue = dataList.get(years);
+        Double previousValue = dataList.get(0);
+        if (currentValue == null || previousValue == null) return Double.NaN;
+
         double growth = Math.pow((currentValue / previousValue), (1.0 / years)) - 1;
-
-        if (previousValue < 0 && currentValue < 0) growth = -growth;
-        else if (previousValue < 0 && currentValue > 0) growth = -growth;
-
+        if (currentValue < 0 && previousValue < 0) {
+            growth = -growth;
+        }
         return growth;
     }
 
-    @Override
-    public List<Double> getROICAverageList(List<Double> roicList) {
-        List<Double> roicAvgList = new ArrayList<>();
+    public Map<Integer, Double> getGrowthRates(
+            List<Double> dataList, Function<List<Double>, Double> function) {
+        if (dataList == null) return null;
 
-        if (roicList.size() >= 10) {
-            roicAvgList.add(computeROICAverage(
-                    roicList.subList(roicList.size()-10, roicList.size())));
-        } else roicAvgList.add(null);
-        if (roicList.size() >= 5) {
-            roicAvgList.add(computeROICAverage(
-                    roicList.subList(roicList.size()-5, roicList.size())));
-        } else roicAvgList.add(null);
-        if (roicList.size() >= 1) {
-            roicAvgList.add(roicList.get(roicList.size()-1));
-        } else roicAvgList.add(null);
+        Map<Integer, Double> growthRates = new HashMap<>();
 
-        return roicAvgList;
+        if (dataList.size() >= 10) {
+            dataList.subList(0, 10);
+        }
+        if (dataList.size() >= 2) {
+            for (int i = dataList.size()-1; i >= 1; --i) {
+                growthRates.put(i, function.apply(dataList.subList(dataList.size()-(i+1), dataList.size())));
+            }
+        }
+        else throw new IllegalArgumentException("No data was provided enough for growth rate calculation");
+
+        return growthRates;
     }
 
     @Override
-    public List<Double> getGrowthRateList(List<Double> numberList) {
-        List<Double> growthRateList = new ArrayList<>();
-
-        if (numberList.size() >= 10) {
-            growthRateList.add(computeGrowthRate(
-                    numberList.get(numberList.size()-10), numberList.get(numberList.size()-1), 10
-            ));
-        } else growthRateList.add(null);
-        if (numberList.size() >= 5) {
-            growthRateList.add(computeGrowthRate(
-                    numberList.get(numberList.size()-5), numberList.get(numberList.size()-1), 5
-            ));
-        } else growthRateList.add(null);
-        if (numberList.size() >= 2) {
-            growthRateList.add(computeGrowthRate(
-                    numberList.get(numberList.size()-2), numberList.get(numberList.size()-1), 1
-            ));
-        } else growthRateList.add(null);
-
-        return growthRateList;
+    public Map<Integer, Double> getROICAverageList(List<Double> roicList) {
+        return getGrowthRates(roicList, this::computeROICAverage);
     }
 
     @Override
-    public Map<BigFiveNumberType, List<Double>> getBigFiveGrowthRates(Map<BigFiveNumberType, List<Double>> bigFiveNumbers) {
-        Map<BigFiveNumberType, List<Double>> bigFiveGrowthRate = new HashMap<>();
-        List<Double> roicList = bigFiveNumbers.get(BigFiveNumberType.ROIC);
-        List<Double> salesList = bigFiveNumbers.get(BigFiveNumberType.SALES);
-        List<Double> epsList = bigFiveNumbers.get(BigFiveNumberType.EPS);
-        List<Double> equityList = bigFiveNumbers.get(BigFiveNumberType.EQUITY);
-        List<Double> fcfList = bigFiveNumbers.get(BigFiveNumberType.FCF);
-
-        bigFiveGrowthRate.put(BigFiveNumberType.ROIC, getROICAverageList(roicList));
-        bigFiveGrowthRate.put(BigFiveNumberType.SALES, getGrowthRateList(salesList));
-        bigFiveGrowthRate.put(BigFiveNumberType.EPS, getGrowthRateList(epsList));
-        bigFiveGrowthRate.put(BigFiveNumberType.EQUITY, getGrowthRateList(equityList));
-        bigFiveGrowthRate.put(BigFiveNumberType.FCF, getGrowthRateList(fcfList));
-
-        return bigFiveGrowthRate;
+    public Map<Integer, Double> getGrowthRateList(List<Double> dataList) {
+        return getGrowthRates(dataList, this::computeGrowthRate);
     }
 
     @Override
-    public double getStickerPrice(Map<BigFiveNumberType, List<Double>> bigFiveNumbers) {
-        Map<BigFiveNumberType, List<Double>> bigFiveGrowthRates = getBigFiveGrowthRates(bigFiveNumbers);
+    public Map<BigFiveNumberType, Map<Integer, Double>>
+    getBigFiveGrowthRates(Map<BigFiveNumberType, List<Double>> bigFiveNumbers) {
+        Map<BigFiveNumberType, Map<Integer, Double>> bigFiveGrowthRates = new HashMap<>();
+
+        for (BigFiveNumberType type : BigFiveNumberType.values()) {
+            List<Double> dataList = bigFiveNumbers.get(type);
+            if (type == BigFiveNumberType.ROIC) {
+                bigFiveGrowthRates.put(type, getROICAverageList(dataList));
+            }
+            else {
+                bigFiveGrowthRates.put(type, getGrowthRateList(dataList));
+            }
+        }
+
+        return bigFiveGrowthRates;
+    }
+
+    @Override
+    public double getStickerPrice(
+        Map<BigFiveNumberType, List<Double>> bigFiveNumbers, BigFiveNumberType type
+    ) {
         double averagePER = Integer.MAX_VALUE; // temporary value until api is implemented
         double currentEPS = bigFiveNumbers.get(BigFiveNumberType.EPS)
                 .get(bigFiveNumbers.get(BigFiveNumberType.EPS).size()-1);
         double estimatedEPSGrowthRate;
-        int years;
+        int years = 0;
 
-        int minSize = Math.min(
-                bigFiveGrowthRates.get(BigFiveNumberType.ROIC).size(),
-                Math.min(bigFiveGrowthRates.get(BigFiveNumberType.SALES).size(),
-                Math.min(bigFiveGrowthRates.get(BigFiveNumberType.EPS).size(),
-                Math.min(bigFiveGrowthRates.get(BigFiveNumberType.EQUITY).size(),
-                bigFiveGrowthRates.get(BigFiveNumberType.FCF).size())))
-        );
-        if (minSize >= 10) years = 10;
-        else if (minSize >= 5) years = 5;
-        else if (minSize >= 1) years = 1;
-        else throw new JournalInvalidException("provided data is smaller than a year");
-
-        List<Double> equityGrowthRate = bigFiveGrowthRates.get(BigFiveNumberType.EQUITY);
-        estimatedEPSGrowthRate = switch (years) {
-            case 10 -> equityGrowthRate.get(0);
-            case 5 -> equityGrowthRate.get(1);
-            case 1 -> equityGrowthRate.get(2);
-            default -> throw new JournalInvalidException("years cannot be out of bounds");
-        };
-
-        double futurePER = Math.min(2 * estimatedEPSGrowthRate, averagePER);
-
-        if (estimatedEPSGrowthRate < 0) {
-            double sum = 0;
-            int count = 0;
-            for (List<Double> list : bigFiveGrowthRates.values()) {
-                switch (years) {
-                    case 10 -> {
-                        sum += list.get(0);
-                        count++;
-                    }
-                    case 5 -> {
-                        sum += list.get(1);
-                        count++;
-                    }
-                    case 1 -> {
-                        sum += list.get(2);
-                        count++;
-                    }
-                    default -> throw new JournalInvalidException("years cannot be out of bounds");
-                }
-            }
-            estimatedEPSGrowthRate = sum / count;
-            if (estimatedEPSGrowthRate < 0) {
-                return Integer.MIN_VALUE;
-            }
+        Map<Integer, Double> growthRate
+                = getGrowthRateList(bigFiveNumbers.get(type));
+        for (int key : growthRate.keySet()) {
+            years = Math.max(years, key);
         }
+        estimatedEPSGrowthRate = growthRate.get(years);
+
+        double futurePER = Math.min(2 * estimatedEPSGrowthRate, averagePER) * 100;
 
         double futureEPS = currentEPS * Math.pow((1 + estimatedEPSGrowthRate), years);
         double futureStickerPrice = futureEPS * futurePER;
-        double minReturnDivider = switch (years) { // If 15% return rate
-            case 10 -> 4.0;
-            case 5 -> 2.0;
-            case 1 -> 1.0;
-            default -> throw new JournalInvalidException("years cannot be out of bounds");
-        };
 
-        return futureStickerPrice / minReturnDivider;
+        return futureStickerPrice / Math.pow(1+0.15, years);
+    }
+
+    @Override
+    public double getMOSPrice(double stickerPrice) {
+        return stickerPrice / 2.0;
     }
 }

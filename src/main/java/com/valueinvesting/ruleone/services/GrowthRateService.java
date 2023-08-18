@@ -4,17 +4,24 @@ import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public interface GrowthRateService {
     double computeROICAverage(List<Double> roicList);
 
-    double computeGrowthRate(double previousValue, double currentValue, int years);
+    double computeGrowthRate(List<Double> dataList);
 
-    List<Double> getROICAverageList(List<Double> roicList);
+    public Map<Integer, Double> getGrowthRates(
+            List<Double> dataList, Function<List<Double>, Double> function);
 
-    List<Double> getGrowthRateList(List<Double> numberList);
+    Map<Integer, Double> getROICAverageList(List<Double> roicList);
 
-    Map<BigFiveNumberType, List<Double>> getBigFiveGrowthRates(Map<BigFiveNumberType, List<Double>> bigFiveNumbers);
+    Map<Integer, Double> getGrowthRateList(List<Double> dataList);
 
-    double getStickerPrice(Map<BigFiveNumberType, List<Double>> bigFiveNumbers);
+    Map<BigFiveNumberType, Map<Integer, Double>>
+    getBigFiveGrowthRates(Map<BigFiveNumberType, List<Double>> bigFiveNumbers);
+
+    double getStickerPrice(Map<BigFiveNumberType, List<Double>> bigFiveNumbers, BigFiveNumberType type);
+
+    double getMOSPrice(double stickerPrice);
 }
