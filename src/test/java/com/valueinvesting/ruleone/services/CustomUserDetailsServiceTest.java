@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -26,7 +28,8 @@ class CustomUserDetailsServiceTest {
 
     @BeforeEach
     void setUp() {
-        underTest = new CustomUserDetailsService(appUserRepository);
+        underTest = new CustomUserDetailsService();
+        underTest.setAppUserRepository(appUserRepository);
     }
 
     @Test
@@ -37,7 +40,7 @@ class CustomUserDetailsServiceTest {
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<Authority>(List.of(authority)));
 
         given(appUserRepository.findByUsername("honggildong"))
                 .willReturn(Optional.of(appUser));

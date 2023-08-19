@@ -19,7 +19,7 @@ public class Authority {
     private AuthorityType authority = AuthorityType.TRIAL;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "authority")
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="app_user_id", columnDefinition = "INT NOT NULL")
     private AppUser appUser;
 
@@ -58,7 +58,6 @@ public class Authority {
         return "Authority{" +
                 "id=" + id +
                 ", authority='" + authority + '\'' +
-                ", appUser=" + appUser +
                 '}';
     }
 }

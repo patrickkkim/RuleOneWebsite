@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="app_user")
@@ -45,16 +47,16 @@ public class AppUser {
     private boolean isActive;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="authority_id", columnDefinition = "INT NOT NULL")
-    private Authority authority;
+    private Set<Authority> authorities = new HashSet<>();
 
     public AppUser() {}
-    public AppUser(@NotNull String username, String password, @NotNull String email, @NotNull Authority authority) {
+    public AppUser(@NotNull String username, String password, @NotNull String email, @NotNull Set<Authority> authority) {
         this.username = username;
         this.encryptedPassword = password;
         this.email = email;
-        this.authority = authority;
+        this.authorities = authority;
     }
 
     public int getId() {
@@ -105,12 +107,12 @@ public class AppUser {
         isActive = active;
     }
 
-    public Authority getAuthority() {
-        return authority;
+    public Set<Authority> getAuthority() {
+        return authorities;
     }
 
-    public void setAuthority(Authority authority) {
-        this.authority = authority;
+    public void setAuthority(Set<Authority> authority) {
+        this.authorities = authority;
     }
 
     @Override
@@ -122,7 +124,7 @@ public class AppUser {
                 ", email='" + email + '\'' +
                 ", createdDate=" + createdDate +
                 ", isActive=" + isActive +
-                ", authority=" + authority +
+                ", authority=" + authorities +
                 '}';
     }
 }

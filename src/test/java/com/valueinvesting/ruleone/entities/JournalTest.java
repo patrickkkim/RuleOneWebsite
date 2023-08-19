@@ -10,10 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
@@ -32,7 +29,7 @@ class JournalTest {
         appUser.setEncryptedPassword("asdfasdfasdfasf");
         appUser.setUsername("honggildong");
         Authority authority = new Authority();
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
         authority.setAppUser(appUser);
 
         List<Double> roic = new ArrayList<>();

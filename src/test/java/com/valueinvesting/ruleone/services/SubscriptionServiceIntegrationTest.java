@@ -18,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -42,7 +44,7 @@ class SubscriptionServiceIntegrationTest {
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
         subscription = new Subscription();
         subscription.setAppUser(appUser);
         subscription.setSubscribedDate(Instant.now());
@@ -122,7 +124,7 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setEncryptedPassword("asdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser2.setAuthority(authority);
+        appUser2.setAuthority(new HashSet<>(List.of(authority)));
         subscriptionRepository.save(subscription);
 
         assertThatExceptionOfType(SubscriptionNotFoundException.class)
@@ -150,7 +152,7 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setEncryptedPassword("asdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser2.setAuthority(authority);
+        appUser2.setAuthority(new HashSet<>(List.of(authority)));
         subscriptionRepository.save(subscription);
 
         assertThatExceptionOfType(SubscriptionNotFoundException.class)
@@ -179,7 +181,7 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setEncryptedPassword("asdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser2.setAuthority(authority);
+        appUser2.setAuthority(new HashSet<>(List.of(authority)));
         Instant newInstant = Instant.ofEpochSecond(Instant.now().getEpochSecond() + 100000);
         subscriptionRepository.save(subscription);
 
@@ -209,7 +211,7 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setEncryptedPassword("asdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser2.setAuthority(authority);
+        appUser2.setAuthority(new HashSet<>(List.of(authority)));
         Instant newInstant = Instant.ofEpochSecond(Instant.now().getEpochSecond() + 100000);
         subscriptionRepository.save(subscription);
 
@@ -238,7 +240,7 @@ class SubscriptionServiceIntegrationTest {
         appUser2.setEncryptedPassword("asdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser2.setAuthority(authority);
+        appUser2.setAuthority(new HashSet<>(List.of(authority)));
         subscriptionRepository.save(subscription);
 
         assertThatExceptionOfType(SubscriptionNotFoundException.class)

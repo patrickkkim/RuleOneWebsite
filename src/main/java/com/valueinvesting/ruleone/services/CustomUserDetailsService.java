@@ -3,6 +3,7 @@ package com.valueinvesting.ruleone.services;
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -18,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private AppUserRepository appUserRepository;
 
     @Autowired
-    public CustomUserDetailsService(AppUserRepository appUserRepository) {
+    public void setAppUserRepository(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }
 
@@ -30,10 +33,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         AppUser appUser = optionalAppUser.get();
 
+        List<GrantedAuthority> authorities = appUser.getAuthority()
+                .stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority().toString()))
+                .collect(Collectors.toList());
+
         return User.builder()
                 .username(appUser.getUsername())
-                .password(appUser.getEncryptedPassword())
-                .authorities(new SimpleGrantedAuthority(appUser.getAuthority().getAuthority().toString()))
+                .password(appUser.getEncryptedPassword().replace("{bcrypt}", ""))
+                .authorities(authorities)
                 .build();
     }
 }

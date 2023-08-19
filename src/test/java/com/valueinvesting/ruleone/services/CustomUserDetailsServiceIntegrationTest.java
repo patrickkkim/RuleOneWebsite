@@ -11,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.HashSet;
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
@@ -19,7 +22,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 @Transactional
 class CustomUserDetailsServiceIntegrationTest {
 
-    @Autowired CustomUserDetailsService underTest;
+    @Autowired
+    CustomUserDetailsService underTest;
     @Autowired AppUserRepository appUserRepository;
 
     @Test
@@ -31,7 +35,7 @@ class CustomUserDetailsServiceIntegrationTest {
         Authority authority = new Authority();
         authority.setAuthority(AuthorityType.ESSENTIAL);
         authority.setAppUser(appUser);
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<Authority>(List.of(authority)));
 
         appUserRepository.save(appUser);
 

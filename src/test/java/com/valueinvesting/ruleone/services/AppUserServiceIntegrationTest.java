@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -43,7 +46,7 @@ class AppUserServiceIntegrationTest {
         appUser.setEncryptedPassword("test123");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<Authority>(List.of(authority)));
     }
 
     @Test

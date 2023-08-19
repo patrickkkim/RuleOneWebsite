@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -39,7 +41,7 @@ class AuthorityServiceIntegrationTest {
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("123123123");
         authority = new Authority();
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<Authority>(List.of(authority)));
         authority.setAppUser(appUser);
     }
 

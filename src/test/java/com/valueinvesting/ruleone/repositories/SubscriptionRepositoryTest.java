@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -30,7 +32,7 @@ class SubscriptionRepositoryTest {
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
     }
 
     @Test

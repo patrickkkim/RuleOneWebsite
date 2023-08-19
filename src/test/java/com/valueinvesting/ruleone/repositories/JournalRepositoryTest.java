@@ -33,7 +33,7 @@ class JournalRepositoryTest {
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
 
         journal = new Journal();
         journal.setAppUser(appUser);
@@ -131,7 +131,7 @@ class JournalRepositoryTest {
         appUser2.setEncryptedPassword("asdfasdfasdfasdf");
         Authority authority = new Authority();
         authority.setAppUser(appUser2);
-        appUser2.setAuthority(authority);
+        appUser2.setAuthority(new HashSet<>(List.of(authority)));
 
         Journal journal2 = new Journal();
         journal2.setAppUser(appUser2);

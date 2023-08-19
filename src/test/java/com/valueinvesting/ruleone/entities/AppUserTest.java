@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.util.HashSet;
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
@@ -26,7 +29,7 @@ class AppUserTest {
         String email = "asdf@naver.com";
         Authority authority = new Authority();
         appUser = new AppUser();
-        appUser.setAuthority(authority);
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
         authority.setAppUser(appUser);
         authority.setAuthority(AuthorityType.ESSENTIAL);
         appUser.setUsername(name);
