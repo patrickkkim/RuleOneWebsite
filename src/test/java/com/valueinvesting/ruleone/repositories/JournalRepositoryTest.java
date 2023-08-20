@@ -23,7 +23,7 @@ class JournalRepositoryTest {
 
     @Autowired private TestEntityManager testEntityManager;
     @Autowired private JournalRepository underTest;
-    private Journal journal;
+    private Journal journal, journal2, journal3;
 
     @BeforeEach
     void setUp() {
@@ -62,6 +62,24 @@ class JournalRepositoryTest {
 
         journal.setJsonBigFiveNumber(bigFiveNumbers);
         journal.setMemo("This is a memo!");
+
+        journal2 = new Journal();
+        journal2.setAppUser(appUser);
+        journal2.setBought(true);
+        journal2.setTickerSymbol("META");
+        journal2.setStockPrice((float) 208.85);
+        journal2.setStockAmount(23);
+        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
+        journal2.setMemo("This is a memo!");
+
+        journal3 = new Journal();
+        journal3.setAppUser(appUser);
+        journal3.setBought(true);
+        journal3.setTickerSymbol("META");
+        journal3.setStockPrice((float) 208.85);
+        journal3.setStockAmount(23);
+        journal3.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
+        journal3.setMemo("This is a memo!");
     }
 
     @Test
@@ -76,16 +94,6 @@ class JournalRepositoryTest {
     @Test
     void checkIfFindsMultipleJournalByAppUserId() {
         AppUser appUser = underTest.save(journal).getAppUser();
-
-        Journal journal2 = new Journal();
-        journal2.setAppUser(appUser);
-        journal2.setBought(true);
-        journal2.setTickerSymbol("META");
-        journal2.setStockPrice((float) 208.85);
-        journal2.setStockAmount(23);
-        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
-        journal2.setMemo("This is a memo!");
-
         underTest.save(journal2);
 
         Pageable pageable = PageRequest.of(0, 3);
@@ -97,16 +105,6 @@ class JournalRepositoryTest {
     @Test
     void checkIfPaginatesMultipleJournalByAppUserId() {
         AppUser appUser = underTest.save(journal).getAppUser();
-
-        Journal journal2 = new Journal();
-        journal2.setAppUser(appUser);
-        journal2.setBought(true);
-        journal2.setTickerSymbol("META");
-        journal2.setStockPrice((float) 208.85);
-        journal2.setStockAmount(23);
-        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
-        journal2.setMemo("This is a memo!");
-
         underTest.save(journal2);
 
         Pageable pageable = PageRequest.of(0, 1);
@@ -132,15 +130,7 @@ class JournalRepositoryTest {
         Authority authority = new Authority();
         authority.setAppUser(appUser2);
         appUser2.setAuthority(new HashSet<>(List.of(authority)));
-
-        Journal journal2 = new Journal();
         journal2.setAppUser(appUser2);
-        journal2.setBought(true);
-        journal2.setTickerSymbol("META");
-        journal2.setStockPrice((float) 208.85);
-        journal2.setStockAmount(23);
-        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
-        journal2.setMemo("This is a memo!");
 
         underTest.save(journal2);
 
