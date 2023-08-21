@@ -4,6 +4,7 @@ import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Authority;
 import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -24,11 +26,12 @@ class JournalRepositoryTest {
 
     @Autowired private TestEntityManager testEntityManager;
     @Autowired private JournalRepository underTest;
-    private Journal journal, journal2, journal3;
+    private List<Journal> journalList = new ArrayList<>();
+    private AppUser appUser;
 
     @BeforeEach
     void setUp() {
-        AppUser appUser = new AppUser();
+        appUser = new AppUser();
         appUser.setUsername("honggilddong");
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdfasdf");
@@ -36,12 +39,6 @@ class JournalRepositoryTest {
         authority.setAppUser(appUser);
         appUser.setAuthority(new HashSet<>(List.of(authority)));
 
-        journal = new Journal();
-        journal.setAppUser(appUser);
-        journal.setBought(true);
-        journal.setTickerSymbol("AAPL");
-        journal.setStockPrice((float) 208.85);
-        journal.setStockAmount(23);
         List<Double> roic = new ArrayList<>();
         List<Double> sales = new ArrayList<>();
         List<Double> eps = new ArrayList<>();
@@ -61,69 +58,121 @@ class JournalRepositoryTest {
         bigFiveNumbers.put(BigFiveNumberType.EQUITY, equity);
         bigFiveNumbers.put(BigFiveNumberType.FCF, fcf);
 
-        journal.setJsonBigFiveNumber(bigFiveNumbers);
-        journal.setMemo("This is a memo!");
+        for (int i = 0; i < 9; ++i) {
+            Journal journal = new Journal();
+            journal.setAppUser(appUser);
+            journal.setMemo("asdf");
+            journal.setBought(true);
+            journal.setTickerSymbol("BABA");
+            journal.setStockPrice(100);
+            journal.setStockAmount(1);
+            journal.setStockDate(LocalDate.of(2020, 7, 28));
+            journal.setJsonBigFiveNumber(bigFiveNumbers);
+            journalList.add(journal);
+        }
 
-        journal2 = new Journal();
-        journal2.setAppUser(appUser);
-        journal2.setBought(true);
-        journal2.setTickerSymbol("META");
-        journal2.setStockPrice((float) 208.85);
-        journal2.setStockAmount(23);
-        journal2.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
-        journal2.setMemo("This is a memo!");
+        Journal journal = journalList.get(0);
+        journal.setBought(false);
+        journal.setTickerSymbol("AAPL");
+        journal.setStockPrice(100);
+        journal.setStockAmount(2);
+        journal.setStockDate(LocalDate.of(2020, 7, 28));
 
-        journal3 = new Journal();
-        journal3.setAppUser(appUser);
-        journal3.setBought(true);
-        journal3.setTickerSymbol("META");
-        journal3.setStockPrice((float) 208.85);
-        journal3.setStockAmount(23);
-        journal3.setJsonBigFiveNumber(journal.getJsonBigFiveNumber());
-        journal3.setMemo("This is a memo!");
+        journal = journalList.get(1);
+        journal.setBought(true);
+        journal.setTickerSymbol("AAPL");
+        journal.setStockPrice(100);
+        journal.setStockAmount(5);
+        journal.setStockDate(LocalDate.of(2020, 5, 22));
+
+        journal = journalList.get(2);
+        journal.setBought(false);
+        journal.setTickerSymbol("META");
+        journal.setStockPrice(303.28);
+        journal.setStockAmount(1);
+        journal.setStockDate(LocalDate.of(2023, 8, 18));
+
+        journal = journalList.get(3);
+        journal.setBought(true);
+        journal.setTickerSymbol("META");
+        journal.setStockPrice(204.23);
+        journal.setStockAmount(3);
+        journal.setStockDate(LocalDate.of(2022, 4, 25));
+
+        journal = journalList.get(4);
+        journal.setBought(true);
+        journal.setTickerSymbol("META");
+        journal.setStockPrice(216.14);
+        journal.setStockAmount(5);
+        journal.setStockDate(LocalDate.of(2022, 3, 25));
+
+        journal = journalList.get(5);
+        journal.setBought(true);
+        journal.setTickerSymbol("META");
+        journal.setStockPrice(205.26);
+        journal.setStockAmount(5);
+        journal.setStockDate(LocalDate.of(2022, 3, 22));
+
+        journal = journalList.get(6);
+        journal.setBought(true);
+        journal.setTickerSymbol("META");
+        journal.setStockPrice(212.68);
+        journal.setStockAmount(1);
+        journal.setStockDate(LocalDate.of(2022, 2, 22));
+
+        journal = journalList.get(7);
+        journal.setBought(true);
+        journal.setTickerSymbol("META");
+        journal.setStockPrice(253.49);
+        journal.setStockAmount(4);
+        journal.setStockDate(LocalDate.of(2022, 2, 8));
+
+        journal = journalList.get(8);
+        journal.setBought(true);
+        journal.setTickerSymbol("META");
+        journal.setStockPrice(339.98);
+        journal.setStockAmount(3);
+        journal.setStockDate(LocalDate.of(2021, 1, 5));
     }
 
     @Test
     void checkIfFindsJournalByAppUserId() {
-        int id = underTest.save(journal).getAppUser().getId();
-        Pageable pageable = PageRequest.of(0, 3);
-        List<Journal> journalList = underTest.findJournalByAppUserId(id, pageable).getContent();
-
-        assertThat(journalList.get(0)).isEqualTo(journal);
-    }
-
-    @Test
-    void checkIfFindsMultipleJournalByAppUserId() {
-        AppUser appUser = underTest.save(journal).getAppUser();
-        underTest.save(journal2);
+        underTest.saveAll(journalList);
 
         Pageable pageable = PageRequest.of(0, 3);
-        List<Journal> journalList = underTest.findJournalByAppUserId(appUser.getId(), pageable).getContent();
-        assertThat(journalList.get(0)).isEqualTo(journal);
-        assertThat(journalList.get(1)).isEqualTo(journal2);
+        List<Journal> found = underTest.findJournalByAppUserIdOrderByStockDateDesc(
+                appUser.getId(), pageable).getContent();
+
+        Assertions.assertThat(found).containsExactly(
+                journalList.get(2), journalList.get(3), journalList.get(4));
     }
 
     @Test
     void checkIfPaginatesMultipleJournalByAppUserId() {
-        AppUser appUser = underTest.save(journal).getAppUser();
-        underTest.save(journal2);
+        underTest.saveAll(journalList);
 
-        Pageable pageable = PageRequest.of(0, 1);
-        Page<Journal> page1 = underTest.findJournalByAppUserId(appUser.getId(), pageable);
-        pageable = PageRequest.of(1, 1);
-        Page<Journal> page2 = underTest.findJournalByAppUserId(appUser.getId(), pageable);
-        assertThat(page1.getContent().get(0)).isEqualTo(journal);
-        assertThat(page2.getContent().get(0)).isEqualTo(journal2);
+        Page<Journal> page1 = underTest.findJournalByAppUserIdOrderByStockDateDesc(
+                appUser.getId(), PageRequest.of(0, 1));
+        Page<Journal> page2 = underTest.findJournalByAppUserIdOrderByStockDateDesc(
+                appUser.getId(), PageRequest.of(1, 1));
+        assertThat(page1.getContent().get(0)).isEqualTo(journalList.get(2));
+        assertThat(page2.getContent().get(0)).isEqualTo(journalList.get(3));
         assertThatExceptionOfType(IndexOutOfBoundsException.class)
-                .isThrownBy(() -> {
-                    page1.getContent().get(1);
-                });
+                .isThrownBy(() -> page1.getContent().get(1));
+    }
+
+    @Test
+    void checkIfFindsJournalByAppUserIdAndTickerSymbol() {
+        underTest.saveAll(journalList);
+
+        List<Journal> found = underTest.findJournalByAppUserIdAndTickerSymbolOrderByStockDateDesc(
+                appUser.getId(), "META", PageRequest.of(1, 2)).getContent();
+
+        Assertions.assertThat(found).containsExactly(journalList.get(4), journalList.get(5));
     }
 
     @Test
     void checkIfFindsAllByAppUserId() {
-        underTest.save(journal);
-
         AppUser appUser2 = new AppUser();
         appUser2.setUsername("honggilddong2");
         appUser2.setEmail("b@b.com");
@@ -131,22 +180,23 @@ class JournalRepositoryTest {
         Authority authority = new Authority();
         authority.setAppUser(appUser2);
         appUser2.setAuthority(new HashSet<>(List.of(authority)));
-        journal2.setAppUser(appUser2);
+        journalList.get(1).setAppUser(appUser2);
 
-        underTest.save(journal2);
+        underTest.saveAll(journalList);
 
-        List<Journal> journalList = underTest.findAllByAppUserId(appUser2.getId());
-        assertThat(journalList.size() == 1).isTrue();
-        assertThat(journalList.get(0).getAppUser()).isEqualTo(appUser2);
+        List<Journal> found = underTest.findAllByAppUserId(appUser2.getId());
+        assertThat(found.size()).isEqualTo(1);
+        assertThat(found.get(0).getAppUser()).isEqualTo(appUser2);
     }
 
     @Test
     void checkIfUpdatedTickerSymbolById() {
         String newSymbol = "GOOGL";
 
-        int id = underTest.save(journal).getId();
+        underTest.saveAll(journalList);
+        int id = journalList.get(0).getId();
         underTest.updateTickerSymbolById(id, newSymbol);
-        testEntityManager.refresh(journal);
+        testEntityManager.refresh(journalList.get(0));
         Journal found = underTest.findById(id).get();
 
         assertThat(found.getTickerSymbol()).isEqualTo(newSymbol);
@@ -156,9 +206,10 @@ class JournalRepositoryTest {
     void checkIfUpdatedBoughtById() {
         boolean newBought = false;
 
-        int id = underTest.save(journal).getId();
+        underTest.saveAll(journalList);
+        int id = journalList.get(0).getId();
         underTest.updateBoughtById(id, newBought);
-        testEntityManager.refresh(journal);
+        testEntityManager.refresh(journalList.get(0));
         Journal found = underTest.findById(id).get();
 
         assertThat(found.isBought()).isEqualTo(newBought);
@@ -168,9 +219,10 @@ class JournalRepositoryTest {
     void checkIfUpdatedStockPriceById() {
         float newPrice = (float) 215.9945;
 
-        int id = underTest.save(journal).getId();
+        underTest.saveAll(journalList);
+        int id = journalList.get(0).getId();
         underTest.updateStockPriceById(id, newPrice);
-        testEntityManager.refresh(journal);
+        testEntityManager.refresh(journalList.get(0));
         Journal found = underTest.findById(id).get();
 
         assertThat(found.getStockPrice()).isEqualTo(newPrice);
@@ -180,9 +232,10 @@ class JournalRepositoryTest {
     void checkIfUpdateStockAmountById() {
         int newAmount = 399;
 
-        int id = underTest.save(journal).getId();
+        underTest.saveAll(journalList);
+        int id = journalList.get(0).getId();
         underTest.updateStockAmountById(id, newAmount);
-        testEntityManager.refresh(journal);
+        testEntityManager.refresh(journalList.get(0));
         Journal found = underTest.findById(id).get();
 
         assertThat(found.getStockAmount()).isEqualTo(newAmount);
@@ -209,9 +262,10 @@ class JournalRepositoryTest {
         bigFiveNumbers.put(BigFiveNumberType.EQUITY, equity);
         bigFiveNumbers.put(BigFiveNumberType.FCF, fcf);
 
-        int id = underTest.save(journal).getId();
+        underTest.saveAll(journalList);
+        int id = journalList.get(0).getId();
         underTest.updateJsonBigFiveNumberById(id, bigFiveNumbers);
-        testEntityManager.refresh(journal);
+        testEntityManager.refresh(journalList.get(0));
         Journal found = underTest.findById(id).get();
 
         assertThat(found.getJsonBigFiveNumber().get(BigFiveNumberType.ROIC).get(0))
@@ -222,9 +276,10 @@ class JournalRepositoryTest {
     void updateMemoById() {
         String newMemo = "New memo!";
 
-        int id = underTest.save(journal).getId();
+        underTest.saveAll(journalList);
+        int id = journalList.get(0).getId();
         underTest.updateMemoById(id, newMemo);
-        testEntityManager.refresh(journal);
+        testEntityManager.refresh(journalList.get(0));
         Journal found = underTest.findById(id).get();
 
         assertThat(found.getMemo()).isEqualTo(newMemo);

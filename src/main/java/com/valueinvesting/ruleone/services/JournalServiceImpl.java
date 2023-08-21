@@ -8,6 +8,7 @@ import com.valueinvesting.ruleone.exceptions.JournalInvalidException;
 import com.valueinvesting.ruleone.exceptions.JournalNotFoundException;
 import com.valueinvesting.ruleone.repositories.JournalRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,16 @@ public class JournalServiceImpl implements JournalService {
     @Override
     public Page<Journal> getPaginatedJournals(@NotNull AppUser appUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return journalRepository.findJournalByAppUserId(appUser.getId(), pageable);
+        return journalRepository.findJournalByAppUserIdOrderByStockDateDesc(
+                appUser.getId(), pageable);
+    }
+
+    @Override
+    public Page<Journal> getPaginatedJournalsForSingleStockTicker(
+            @NotNull AppUser appUser, @NotBlank String ticker, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return journalRepository.findJournalByAppUserIdAndTickerSymbolOrderByStockDateDesc(
+                appUser.getId(), ticker, pageable);
     }
 
     @Override

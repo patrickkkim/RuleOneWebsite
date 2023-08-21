@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface JournalRepository extends JpaRepository<Journal, Integer> {
-    Page<Journal> findJournalByAppUserId(int appUserId, Pageable pageable);
+    Page<Journal> findJournalByAppUserIdOrderByStockDateDesc(int appUserId, Pageable pageable);
+
+    Page<Journal> findJournalByAppUserIdAndTickerSymbolOrderByStockDateDesc(int appUserId, String ticker, Pageable pageable);
 
     List<Journal> findAllByAppUserId(int appUserId);
 

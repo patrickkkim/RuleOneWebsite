@@ -9,6 +9,8 @@ import com.valueinvesting.ruleone.exceptions.JournalNotFoundException;
 import com.valueinvesting.ruleone.repositories.JournalRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -154,17 +156,12 @@ class JournalServiceIntegrationTest {
         journalRepository.saveAll(journalList);
 
         List<Journal> list1 = underTest.getPaginatedJournals(appUser, 0, 3).getContent();
-
         List<Journal> list2 = underTest.getPaginatedJournals(appUser, 1, 3).getContent();
 
-        assertThat(list1.size()).isEqualTo(3);
-        assertThat(list1.get(0)).isEqualTo(journalList.get(0));
-        assertThat(list1.get(1)).isEqualTo(journalList.get(1));
-        assertThat(list1.get(2)).isEqualTo(journalList.get(2));
-        assertThat(list2.size()).isEqualTo(3);
-        assertThat(list2.get(0)).isEqualTo(journalList.get(3));
-        assertThat(list2.get(1)).isEqualTo(journalList.get(4));
-        assertThat(list2.get(2)).isEqualTo(journalList.get(5));
+        Assertions.assertThat(list1).containsExactly(
+                journalList.get(2), journalList.get(3), journalList.get(4));
+        Assertions.assertThat(list2).containsExactly(
+                journalList.get(5), journalList.get(6), journalList.get(7));
     }
 
     @Test
@@ -174,6 +171,28 @@ class JournalServiceIntegrationTest {
         Page<Journal> page = underTest.getPaginatedJournals(appUser, 4, 3);
 
         assertThat(page.hasContent()).isFalse();
+    }
+
+    @Test
+    void checkIfGetsPaginatedJournalsForSingleStockTicker(){
+        journalRepository.saveAll(journalList);
+
+        Page<Journal> page = underTest.getPaginatedJournalsForSingleStockTicker(
+                appUser, "META", 2, 2);
+
+        Assertions.assertThat(page.getContent()).containsExactly(
+                journalList.get(6), journalList.get(7));
+    }
+
+    @Test
+    void checkIfGetPaginatedJournalsForSingleStockTickerThrowsExceptionWhenBlank(){
+        journalRepository.saveAll(journalList);
+
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> {
+                    underTest.getPaginatedJournalsForSingleStockTicker(
+                            appUser, "", 2, 2);
+                }).withMessageContaining("must not be blank");
     }
 
     @Test
@@ -201,11 +220,12 @@ class JournalServiceIntegrationTest {
         Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber = new HashMap<>();
         jsonBigFiveNumber.put(BigFiveNumberType.SALES, new ArrayList<>());
 
-        underTest.updateJsonBigFiveNumberByJournalId(journalList.get(1).getId(),
+        underTest.updateJsonBigFiveNumberByJournalId(journalList.get(3).getId(),
                 jsonBigFiveNumber);
-        entityManager.refresh(journalList.get(1));
+        entityManager.refresh(journalList.get(3));
 
-        assertThat(journalRepository.findJournalByAppUserId(appUser.getId(), PageRequest.of(1, 1))
+        assertThat(journalRepository.findJournalByAppUserIdOrderByStockDateDesc(
+                appUser.getId(), PageRequest.of(1, 1))
                 .getContent().get(0).getJsonBigFiveNumber()).isEqualTo(jsonBigFiveNumber);
     }
 
@@ -224,13 +244,12 @@ class JournalServiceIntegrationTest {
         journalRepository.saveAll(journalList);
         String memo = "New memo!!";
 
-        underTest.updateMemoByJournalId(journalList.get(1).getId(), memo);
-        entityManager.refresh(journalList.get(1));
+        underTest.updateMemoByJournalId(journalList.get(3).getId(), memo);
+        entityManager.refresh(journalList.get(3));
 
-        assertThat(journalRepository.findJournalByAppUserId(appUser.getId(), PageRequest.of(1, 1))
+        assertThat(journalRepository.findJournalByAppUserIdOrderByStockDateDesc(
+                appUser.getId(), PageRequest.of(1, 1))
                 .getContent().get(0).getMemo()).isEqualTo(memo);
-
-        assertThat(journalList.get(1).getMemo()).isEqualTo(memo);
     }
 
     @Test

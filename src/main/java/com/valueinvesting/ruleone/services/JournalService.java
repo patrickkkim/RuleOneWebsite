@@ -3,6 +3,7 @@ package com.valueinvesting.ruleone.services;
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 
@@ -13,6 +14,9 @@ public interface JournalService {
     Journal createJournal(@NotNull Journal journal);
 
     Page<Journal> getPaginatedJournals(@NotNull AppUser appUser, int page, int size);
+
+    Page<Journal> getPaginatedJournalsForSingleStockTicker(
+            @NotNull AppUser appUser, @NotBlank String ticker, int page, int size);
 
     Map<String, List<Journal>> getAllJournalsForEachStockTicker(@NotNull AppUser appUser);
 
