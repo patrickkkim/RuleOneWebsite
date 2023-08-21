@@ -13,11 +13,13 @@ public interface JournalService {
 
     Page<Journal> getPaginatedJournals(@NotNull AppUser appUser, int page, int size);
 
-    Map<String, Object> getTotalStockPercentage(@NotNull AppUser appUser);
+    Map<String, List<Journal>> getAllJournalsForEachStockTicker(@NotNull AppUser appUser);
 
-    int getTotalGain(AppUser appUser);
+    Map<String, Double> getTotalStockPercentage(@NotNull AppUser appUser);
 
-    void updateJsonBigFiveNumberByJournalId(int journalId, Map<String, List<Double>> jsonBigFiveNumber);
+    Map<String, Double> getTotalGainForEachStock(@NotNull AppUser appUser);
 
-    void updateMemoByJournalId(int journalId, String memo);
+    void updateJsonBigFiveNumberByJournalId(int journalId, @NotNull Map<String, List<Double>> jsonBigFiveNumber);
+
+    void updateMemoByJournalId(int journalId, @NotNull String memo);
 }

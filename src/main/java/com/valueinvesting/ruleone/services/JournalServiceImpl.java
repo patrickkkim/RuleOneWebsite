@@ -13,10 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class JournalServiceImpl implements JournalService {
 
     private JournalRepository journalRepository;
@@ -49,19 +52,77 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
-    public Map<String, Object> getTotalStockPercentage(@NotNull AppUser appUser) {
-        journalRepository.findAll();
-        return null;
+    public Map<String, List<Journal>> getAllJournalsForEachStockTicker(@NotNull AppUser appUser) {
+        List<Journal> all = journalRepository.findAllByAppUserId(appUser.getId());
+        return all.stream()
+                .sorted(Comparator.comparing(Journal::getStockDate))
+                .collect(Collectors.groupingBy(Journal::getTickerSymbol));
     }
 
     @Override
-    public int getTotalGain(AppUser appUser) {
-        return 0;
+    public Map<String, Double> getTotalStockPercentage(@NotNull AppUser appUser) {
+        Map<String, Double> percentages = new HashMap<>();
+        Map<String, List<Journal>> journalMap = getAllJournalsForEachStockTicker(appUser);
+        int totalCount = 0;
+
+        for (List<Journal> journalList : journalMap.values()) {
+            int count = 0;
+            for (Journal journal : journalList) {
+                if (journal.isBought()) count += journal.getStockAmount();
+                else count -= journal.getStockAmount();
+            }
+            if (count <= 0) count = 0;
+            totalCount += count;
+            percentages.put(journalList.get(0).getTickerSymbol(), (double) count);
+        }
+
+        for (String key : percentages.keySet()) {
+            double percentage = percentages.get(key) / totalCount;
+            percentages.put(key, percentage);
+        }
+
+        return percentages;
+    }
+
+    @Override
+    public Map<String, Double> getTotalGainForEachStock(@NotNull AppUser appUser) {
+        Map<String, Double> totalGainMap = new HashMap<>();
+        Map<String, List<Journal>> stockMap = getAllJournalsForEachStockTicker(appUser);
+
+        for (List<Journal> list : stockMap.values()) {
+            double totalGain = 0.0;
+            double avgBoughtPrice = 0.0;
+            int totalStockAmount = 0;
+            for (Journal journal : list) {
+                if (journal.isBought()) {
+                    avgBoughtPrice = (avgBoughtPrice * totalStockAmount +
+                            journal.getStockPrice() * journal.getStockAmount()) /
+                            (totalStockAmount + journal.getStockAmount());
+                    totalStockAmount += journal.getStockAmount();
+                }
+                else {
+                    if (totalStockAmount > 0) {
+                        if (journal.getStockAmount() > totalStockAmount)
+                            break;
+                        totalGain += (journal.getStockPrice() - avgBoughtPrice)
+                                * journal.getStockAmount();
+                        totalStockAmount -= journal.getStockAmount();
+                    }
+                    else {
+                        // Add total gain anyway even though the stock was sold before bought...
+                        totalGain += journal.getStockPrice() * journal.getStockAmount();
+                    }
+                }
+            }
+            totalGainMap.put(list.get(0).getTickerSymbol(), totalGain);
+        }
+
+        return totalGainMap;
     }
 
     @Transactional
     @Override
-    public void updateJsonBigFiveNumberByJournalId(int journalId, Map<String, List<Double>> jsonBigFiveNumber) {
+    public void updateJsonBigFiveNumberByJournalId(int journalId, @NotNull Map<String, List<Double>> jsonBigFiveNumber) {
         Optional<Journal> optional = journalRepository.findById(journalId);
         if (optional.isEmpty()) {
             throw new JournalNotFoundException("Journal not found with ID: " + journalId);
@@ -71,7 +132,7 @@ public class JournalServiceImpl implements JournalService {
 
     @Transactional
     @Override
-    public void updateMemoByJournalId(int journalId, String memo) {
+    public void updateMemoByJournalId(int journalId, @NotNull String memo) {
         Optional<Journal> optional = journalRepository.findById(journalId);
         if (optional.isEmpty()) {
             throw new JournalNotFoundException("Journal not found with ID: " + journalId);
