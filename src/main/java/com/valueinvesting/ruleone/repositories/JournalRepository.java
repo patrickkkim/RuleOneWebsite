@@ -1,5 +1,6 @@
 package com.valueinvesting.ruleone.repositories;
 
+import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,8 @@ public interface JournalRepository extends JpaRepository<Journal, Integer> {
 
     @Modifying
     @Query("UPDATE Journal j SET j.jsonBigFiveNumber = :json WHERE j.id = :id")
-    void updateJsonBigFiveNumberById(@Param("id") int id, @Param("json") Map<String, List<Double>> json);
+    void updateJsonBigFiveNumberById(@Param("id") int id, @Param("json")
+        Map<BigFiveNumberType, List<Double>> json);
 
     @Modifying
     @Query("UPDATE Journal j SET j.memo = :memo WHERE j.id = :id")

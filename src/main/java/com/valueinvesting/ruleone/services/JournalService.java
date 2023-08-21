@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,7 @@ public interface JournalService {
 
     Map<String, Double> getTotalGainForEachStock(@NotNull AppUser appUser);
 
-    void updateJsonBigFiveNumberByJournalId(int journalId, @NotNull Map<String, List<Double>> jsonBigFiveNumber);
+    void updateJsonBigFiveNumberByJournalId(int journalId, @NotNull Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber);
 
     void updateMemoByJournalId(int journalId, @NotNull String memo);
 }

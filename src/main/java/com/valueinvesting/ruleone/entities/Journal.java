@@ -45,9 +45,9 @@ public class Journal {
     private int stockAmount;
 
     @NotNull
-    @Convert(converter = HashMapConverter.class)
+    @Convert(converter = JsonBigFiveNumberMapConverter.class)
     @Column(name="json_big_five_number", columnDefinition = "JSON NOT NULL")
-    private Map<String, List<Double>> jsonBigFiveNumber;
+    private Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber;
 
     @NotNull
     @Column(name="memo", columnDefinition =
@@ -62,7 +62,7 @@ public class Journal {
 
     public Journal() {}
 
-    public Journal(String tickerSymbol, boolean isBought, double stockPrice, int stockAmount, Map<String, List<Double>> jsonBigFiveNumber, @NotNull String memo, @NotNull AppUser appUser) {
+    public Journal(String tickerSymbol, boolean isBought, double stockPrice, int stockAmount, Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber, @NotNull String memo, @NotNull AppUser appUser) {
         this.tickerSymbol = tickerSymbol;
         this.isBought = isBought;
         this.stockPrice = stockPrice;
@@ -119,11 +119,11 @@ public class Journal {
     public void setStockAmount(@Min(value=1, message="Stock amount must be greater than 0")
                                int stockAmount) {this.stockAmount = stockAmount;}
 
-    public Map<String, List<Double>> getJsonBigFiveNumber() {
+    public Map<BigFiveNumberType, List<Double>> getJsonBigFiveNumber() {
         return jsonBigFiveNumber;
     }
 
-    public void setJsonBigFiveNumber(@NotNull Map<String, List<Double>> jsonBigFiveNumber) {
+    public void setJsonBigFiveNumber(@NotNull Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber) {
         this.jsonBigFiveNumber = jsonBigFiveNumber;
     }
 

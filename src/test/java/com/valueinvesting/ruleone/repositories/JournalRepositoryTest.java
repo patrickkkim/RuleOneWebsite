@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.repositories;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Authority;
+import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,12 +54,12 @@ class JournalRepositoryTest {
             equity.add((double) i);
             fcf.add((double) i);
         }
-        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
-        bigFiveNumbers.put("roic", roic);
-        bigFiveNumbers.put("sales", sales);
-        bigFiveNumbers.put("eps", eps);
-        bigFiveNumbers.put("equity", equity);
-        bigFiveNumbers.put("fcf", fcf);
+        Map<BigFiveNumberType, List<Double>> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put(BigFiveNumberType.ROIC, roic);
+        bigFiveNumbers.put(BigFiveNumberType.SALES, sales);
+        bigFiveNumbers.put(BigFiveNumberType.EPS, eps);
+        bigFiveNumbers.put(BigFiveNumberType.EQUITY, equity);
+        bigFiveNumbers.put(BigFiveNumberType.FCF, fcf);
 
         journal.setJsonBigFiveNumber(bigFiveNumbers);
         journal.setMemo("This is a memo!");
@@ -201,19 +202,19 @@ class JournalRepositoryTest {
             equity.add((double) i);
             fcf.add((double) i);
         }
-        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
-        bigFiveNumbers.put("roic", roic);
-        bigFiveNumbers.put("sales", sales);
-        bigFiveNumbers.put("eps", eps);
-        bigFiveNumbers.put("equity", equity);
-        bigFiveNumbers.put("fcf", fcf);
+        Map<BigFiveNumberType, List<Double>> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put(BigFiveNumberType.ROIC, roic);
+        bigFiveNumbers.put(BigFiveNumberType.SALES, sales);
+        bigFiveNumbers.put(BigFiveNumberType.EPS, eps);
+        bigFiveNumbers.put(BigFiveNumberType.EQUITY, equity);
+        bigFiveNumbers.put(BigFiveNumberType.FCF, fcf);
 
         int id = underTest.save(journal).getId();
         underTest.updateJsonBigFiveNumberById(id, bigFiveNumbers);
         testEntityManager.refresh(journal);
         Journal found = underTest.findById(id).get();
 
-        assertThat(found.getJsonBigFiveNumber().get("roic").get(0))
+        assertThat(found.getJsonBigFiveNumber().get(BigFiveNumberType.ROIC).get(0))
                 .isCloseTo(10.0f, Percentage.withPercentage(5));
     }
 

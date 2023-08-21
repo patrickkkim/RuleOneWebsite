@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
 import com.valueinvesting.ruleone.exceptions.JournalAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.JournalInvalidException;
@@ -122,7 +123,7 @@ public class JournalServiceImpl implements JournalService {
 
     @Transactional
     @Override
-    public void updateJsonBigFiveNumberByJournalId(int journalId, @NotNull Map<String, List<Double>> jsonBigFiveNumber) {
+    public void updateJsonBigFiveNumberByJournalId(int journalId, @NotNull Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber) {
         Optional<Journal> optional = journalRepository.findById(journalId);
         if (optional.isEmpty()) {
             throw new JournalNotFoundException("Journal not found with ID: " + journalId);

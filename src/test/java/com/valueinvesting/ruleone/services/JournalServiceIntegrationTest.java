@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Authority;
+import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.Journal;
 import com.valueinvesting.ruleone.exceptions.JournalInvalidException;
 import com.valueinvesting.ruleone.exceptions.JournalNotFoundException;
@@ -42,7 +43,7 @@ class JournalServiceIntegrationTest {
         authority.setAppUser(appUser);
         appUser.setAuthority(new HashSet<>(List.of(authority)));
 
-        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
+        Map<BigFiveNumberType, List<Double>> bigFiveNumbers = new HashMap<>();
 
         for (int i = 0; i < 10; ++i) {
             Journal journal = new Journal();
@@ -197,10 +198,11 @@ class JournalServiceIntegrationTest {
     @Test
     void checkIfUpdatesJsonBigFiveNumberByJournalId() {
         journalRepository.saveAll(journalList);
-        Map<String, List<Double>> jsonBigFiveNumber = new HashMap<>();
-        jsonBigFiveNumber.put("ROIC", new ArrayList<>());
+        Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber = new HashMap<>();
+        jsonBigFiveNumber.put(BigFiveNumberType.SALES, new ArrayList<>());
 
-        underTest.updateJsonBigFiveNumberByJournalId(journalList.get(1).getId(), jsonBigFiveNumber);
+        underTest.updateJsonBigFiveNumberByJournalId(journalList.get(1).getId(),
+                jsonBigFiveNumber);
         entityManager.refresh(journalList.get(1));
 
         assertThat(journalRepository.findJournalByAppUserId(appUser.getId(), PageRequest.of(1, 1))
@@ -209,10 +211,11 @@ class JournalServiceIntegrationTest {
 
     @Test
     void checkIfUpdateJsonBigFiveNumberByJournalIdThrowsExceptionWhenJournalIsNotFound() {
-        Map<String, List<Double>> jsonBigFiveNumber = new HashMap<>();
+        Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber = new HashMap<>();
 
         assertThatExceptionOfType(JournalNotFoundException.class)
-                .isThrownBy(() -> underTest.updateJsonBigFiveNumberByJournalId(1, jsonBigFiveNumber))
+                .isThrownBy(() -> underTest.updateJsonBigFiveNumberByJournalId(
+                        1, jsonBigFiveNumber))
                 .withMessageContaining("Journal not found");
     }
 

@@ -44,12 +44,12 @@ class JournalTest {
             equity.add((double) i);
             fcf.add((double) i);
         }
-        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
-        bigFiveNumbers.put("roic", roic);
-        bigFiveNumbers.put("sales", sales);
-        bigFiveNumbers.put("eps", eps);
-        bigFiveNumbers.put("equity", equity);
-        bigFiveNumbers.put("fcf", fcf);
+        Map<BigFiveNumberType, List<Double>> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put(BigFiveNumberType.ROIC, roic);
+        bigFiveNumbers.put(BigFiveNumberType.SALES, sales);
+        bigFiveNumbers.put(BigFiveNumberType.EPS, eps);
+        bigFiveNumbers.put(BigFiveNumberType.EQUITY, equity);
+        bigFiveNumbers.put(BigFiveNumberType.FCF, fcf);
         journal = new Journal();
         journal.setTickerSymbol("AAPL");
         journal.setBought(true);
@@ -82,12 +82,12 @@ class JournalTest {
             equity.add((double) i);
             fcf.add((double) i);
         }
-        Map<String, List<Double>> bigFiveNumbers = new HashMap<>();
-        bigFiveNumbers.put("roic", roic);
-        bigFiveNumbers.put("sales", sales);
-        bigFiveNumbers.put("eps", eps);
-        bigFiveNumbers.put("equity", equity);
-        bigFiveNumbers.put("fcf", fcf);
+        Map<BigFiveNumberType, List<Double>> bigFiveNumbers = new HashMap<>();
+        bigFiveNumbers.put(BigFiveNumberType.ROIC, roic);
+        bigFiveNumbers.put(BigFiveNumberType.SALES, sales);
+        bigFiveNumbers.put(BigFiveNumberType.EPS, eps);
+        bigFiveNumbers.put(BigFiveNumberType.EQUITY, equity);
+        bigFiveNumbers.put(BigFiveNumberType.FCF, fcf);
 
         journal.setJsonBigFiveNumber(bigFiveNumbers);
         Journal newJournal = testEntityManager.persist(journal);
