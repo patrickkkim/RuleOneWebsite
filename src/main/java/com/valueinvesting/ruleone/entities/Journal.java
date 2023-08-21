@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -33,15 +34,13 @@ public class Journal {
     @Column(name="stock_date", columnDefinition = "DATE NOT NULL")
     private LocalDate stockDate = LocalDate.now();
 
-    @NotNull
     @Column(name="is_bought", columnDefinition = "BOOLEAN NOT NULL")
     private boolean isBought;
 
-    @NotNull
     @Column(name="stock_price", columnDefinition = "FLOAT NOT NULL")
     private double stockPrice;
 
-    @NotNull
+    @Min(value=1, message="Stock amount must be greater than 0")
     @Column(name="stock_amount", columnDefinition = "INT NOT NULL")
     private int stockAmount;
 
