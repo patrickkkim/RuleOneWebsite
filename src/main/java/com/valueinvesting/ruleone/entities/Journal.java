@@ -116,9 +116,8 @@ public class Journal {
         return stockAmount;
     }
 
-    public void setStockAmount(int stockAmount) {
-        this.stockAmount = stockAmount;
-    }
+    public void setStockAmount(@Min(value=1, message="Stock amount must be greater than 0")
+                               int stockAmount) {this.stockAmount = stockAmount;}
 
     public Map<String, List<Double>> getJsonBigFiveNumber() {
         return jsonBigFiveNumber;
