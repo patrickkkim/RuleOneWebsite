@@ -1,11 +1,13 @@
 package com.valueinvesting.ruleone.entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@Component
 public class JsonNodeToHashMapConverter {
 
     public HashMap<String, Object> convertJsonNodeToHashMap(JsonNode jsonNode) {

@@ -1,6 +1,5 @@
 package com.valueinvesting.ruleone.entities;
 
-import com.valueinvesting.ruleone.services.JsonBigFiveNumberMapConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
