@@ -80,6 +80,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(JsonNodeNullException.class)
+    public ResponseEntity<ErrorResponse> handleJsonNodeNullException(JsonNodeNullException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(), e.getMessage(), Instant.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
         ErrorResponse errorResponse = new ErrorResponse(

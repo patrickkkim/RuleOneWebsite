@@ -1,8 +1,9 @@
-package com.valueinvesting.ruleone.entities;
+package com.valueinvesting.ruleone.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import jakarta.persistence.AttributeConverter;
 
 import java.io.IOException;
