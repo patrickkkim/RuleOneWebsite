@@ -38,7 +38,8 @@ public class StockInfoServiceImpl implements StockInfoService {
                 fetchUrl, HttpMethod.GET, null, JsonNode.class);
 
         JsonNode jsonNode = responseEntity.getBody();
-        if (jsonNode == null || jsonNode.isMissingNode()) throw new JsonNodeNullException(
+        if (jsonNode == null || jsonNode.isMissingNode() || !jsonNode.path("errors").isMissingNode())
+            throw new JsonNodeNullException(
                 responseEntity.getStatusCode() + " : fetched json is null or missing");
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             if (responseEntity.getStatusCode().is4xxClientError())
@@ -54,7 +55,7 @@ public class StockInfoServiceImpl implements StockInfoService {
 
     @Override
     public Map<BigFiveNumberType, Object> getAnnualBigFiveNumbers(JsonNode jsonNode) {
-        if (jsonNode == null || jsonNode.isMissingNode())
+        if (jsonNode == null || jsonNode.isMissingNode() || !jsonNode.path("errors").isMissingNode())
             throw new JsonNodeNullException("Json dataset is null or missing");
         JsonNode annualData = jsonNode.path("data").path("financials").path("annual");
         if (annualData.isMissingNode())
