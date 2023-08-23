@@ -5,14 +5,17 @@ import com.valueinvesting.ruleone.entities.Authority;
 import com.valueinvesting.ruleone.exceptions.UserAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.UserNotFoundException;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
+import com.valueinvesting.ruleone.security.JwtUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +37,7 @@ class AppUserServiceIntegrationTest {
     @PersistenceContext private EntityManager entityManager;
     @Autowired private AppUserRepository appUserRepository;
     @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired private JwtUtil jwtUtil;
     @Autowired private AppUserService underTest;
 
     private AppUser appUser;
@@ -46,7 +50,7 @@ class AppUserServiceIntegrationTest {
         appUser.setEncryptedPassword("test123");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
-        appUser.setAuthority(new HashSet<Authority>(List.of(authority)));
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
     }
 
     @Test
@@ -219,5 +223,23 @@ class AppUserServiceIntegrationTest {
                 .isThrownBy(() -> {
                     underTest.deleteUser(appUser.getId() + 1);
                 }).withMessageContaining("ID");
+    }
+
+    @Test
+    void checkIfLogins() {
+        underTest.createAppUser(appUser);
+        entityManager.refresh(appUser);
+
+        String jwt = underTest.login("honggildong", "test123");
+        assertThat(jwtUtil.extractUsername(jwt)).isEqualTo("honggildong");
+    }
+
+    @Test
+    void checkIfLoginFailsForBadCredentials() {
+        underTest.createAppUser(appUser);
+        entityManager.refresh(appUser);
+
+        assertThatExceptionOfType(BadCredentialsException.class)
+                .isThrownBy(() -> underTest.login("honggildong", "123123"));
     }
 }

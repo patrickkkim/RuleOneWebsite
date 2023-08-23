@@ -16,4 +16,6 @@ public interface AppUserService {
     void deactivateUser(int id);
 
     void deleteUser(int id);
+
+    String login(String username, String password);
 }

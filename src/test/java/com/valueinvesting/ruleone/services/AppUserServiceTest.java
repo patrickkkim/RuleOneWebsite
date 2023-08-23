@@ -4,6 +4,7 @@ import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.exceptions.UserAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.UserNotFoundException;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
+import com.valueinvesting.ruleone.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -26,6 +28,8 @@ class AppUserServiceTest {
 
     @Mock private AppUserRepository appUserRepository;
     @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Mock private AuthenticationManager authenticationManager;
+    @Mock private JwtUtil jwtUtil;
     private AppUser appUser;
     private String encryptedPassword;
     private String encryptionType;
@@ -33,7 +37,8 @@ class AppUserServiceTest {
 
     @BeforeEach
     void setUp() {
-        underTest = new AppUserServiceImpl(appUserRepository, bCryptPasswordEncoder);
+        underTest = new AppUserServiceImpl(
+                appUserRepository, bCryptPasswordEncoder, authenticationManager, jwtUtil);
         appUser = new AppUser();
         appUser.setUsername("honggilddong");
         appUser.setEmail("a@a.com");

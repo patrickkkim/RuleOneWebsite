@@ -4,8 +4,14 @@ import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.exceptions.UserAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.UserNotFoundException;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
+import com.valueinvesting.ruleone.security.JwtUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +22,15 @@ public class AppUserServiceImpl implements AppUserService {
 
     private final AppUserRepository appUserRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public AppUserServiceImpl(AppUserRepository appUserRepository, BCryptPasswordEncoder passwordEncoder) {
+    public AppUserServiceImpl(AppUserRepository appUserRepository, BCryptPasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
     }
 
     @Transactional
@@ -127,5 +137,16 @@ public class AppUserServiceImpl implements AppUserService {
         String password = passwordEncoder.encode(plainText);
         String encodeType = "{bcrypt}";
         return encodeType + password;
+    }
+
+    @Override
+    public String login(String username, String password) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password)
+        );
+        if (authentication.isAuthenticated()) {
+            return jwtUtil.generateToken(username);
+        }
+        else throw new BadCredentialsException("Login failed: Bad credentials");
     }
 }
