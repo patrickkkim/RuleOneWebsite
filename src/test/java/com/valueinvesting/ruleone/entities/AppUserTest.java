@@ -1,54 +1,54 @@
 package com.valueinvesting.ruleone.entities;
 
 import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.HashSet;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @DataJpaTest
-class UserTest {
+class AppUserTest {
 
     @Autowired private TestEntityManager testEntityManager;
-    @Mock private Subscription subscription;
-    private AutoCloseable autoCloseable;
+    AppUser appUser;
 
     @BeforeEach
     void setUp() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        autoCloseable.close();
-    }
-
-    @Test
-    void itShouldCheckIfUserCanBeInserted() {
         String name = "honggildong";
         String password = "asdfasdfasdfasdf";
         String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
-
-        int id = testEntityManager.persist(appUser).getId();
-        AppUser newUser = testEntityManager.find(AppUser.class, id);
-
-        assertThat(newUser).isSameAs(appUser);
+        Authority authority = new Authority();
+        appUser = new AppUser();
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
+        authority.setAppUser(appUser);
+        authority.setAuthority(AuthorityType.ESSENTIAL);
+        appUser.setUsername(name);
+        appUser.setEmail(email);
+        appUser.setEncryptedPassword(password);
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenEmailIsWrong() {
-        String name = "honggildong";
-        String password = "asdfasdfasdfasdf";
+    void checkIfUserCanBeInserted() {
+        int id = testEntityManager.persist(appUser).getId();
+        AppUser newUser = testEntityManager.find(AppUser.class, id);
+
+        assertThat(newUser).isEqualTo(appUser);
+    }
+
+    @Test
+    void checkIfUserCantBeInsertedWhenEmailIsWrong() {
         String email = "aaaaa@.";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+        appUser.setEmail(email);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -58,11 +58,9 @@ class UserTest {
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenUsernameIsShort() {
+    void checkIfUserCantBeInsertedWhenUsernameIsShort() {
         String name = "asdf";
-        String password = "asdfasdfasdfasdf";
-        String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+        appUser.setUsername(name);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -72,11 +70,8 @@ class UserTest {
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenPasswordIsBlank() {
-        String name = "honggildong";
-        String password = "";
-        String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+    void checkIfUserCantBeInsertedWhenPasswordIsBlank() {
+        appUser.setEncryptedPassword("");
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {
@@ -86,11 +81,8 @@ class UserTest {
     }
 
     @Test
-    void itShouldCheckIfUserCantBeInsertedWhenPasswordIsNull() {
-        String name = "honggildong";
-        String password = null;
-        String email = "asdf@naver.com";
-        AppUser appUser = new AppUser(name, password, email, subscription);
+    void checkIfUserCantBeInsertedWhenPasswordIsNull() {
+        appUser.setEncryptedPassword(null);
 
         assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> {

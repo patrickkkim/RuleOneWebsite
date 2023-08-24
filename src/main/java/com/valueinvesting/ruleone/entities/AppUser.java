@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="app_user")
@@ -24,8 +26,9 @@ public class AppUser {
     private String username;
 
     @NotBlank
-    @Column(name="encrypted_password", columnDefinition = "VARCHAR(100) NOT NULL")
-    private String encrypted_password;
+    @Column(name="encrypted_password",
+            columnDefinition = "VARCHAR(100) NOT NULL CHECK (LENGTH() >= 10)")
+    private String encryptedPassword;
 
     @NotNull
     @Size(min=4)
@@ -34,24 +37,26 @@ public class AppUser {
             "VARCHAR(255) NOT NULL CHECK (LENGTH() >= 4)")
     private String email;
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="created_date", columnDefinition =
             "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private java.util.Date createdDate;
+    private Instant createdDate = Instant.now();
 
     @Column(name="is_active", columnDefinition = "BOOLEAN NOT NULL DEFAULT 1")
     private boolean isActive;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="subscription_id", columnDefinition = "INT NOT NULL")
-    private Subscription subscription;
+    @NotNull
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="authority_id", columnDefinition = "INT NOT NULL")
+    private Set<Authority> authorities = new HashSet<>();
 
     public AppUser() {}
-    public AppUser(@NotNull String username, String password, @NotNull String email, @NotNull Subscription subscription) {
+    public AppUser(@NotNull String username, String password, @NotNull String email, @NotNull Set<Authority> authority) {
         this.username = username;
-        this.encrypted_password = password;
+        this.encryptedPassword = password;
         this.email = email;
-        this.subscription = subscription;
+        this.authorities = authority;
     }
 
     public int getId() {
@@ -70,12 +75,12 @@ public class AppUser {
         this.username = username;
     }
 
-    public String getEncrypted_password() {
-        return encrypted_password;
+    public String getEncryptedPassword() {
+        return encryptedPassword;
     }
 
-    public void setEncrypted_password(String encrypted_password) {
-        this.encrypted_password = encrypted_password;
+    public void setEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
     }
 
     public String getEmail() {
@@ -86,11 +91,11 @@ public class AppUser {
         this.email = email;
     }
 
-    public Date getCreatedDate() {
+    public Instant getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -102,12 +107,12 @@ public class AppUser {
         isActive = active;
     }
 
-    public Subscription getSubscription() {
-        return subscription;
+    public Set<Authority> getAuthority() {
+        return authorities;
     }
 
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
+    public void setAuthority(Set<Authority> authority) {
+        this.authorities = authority;
     }
 
     @Override
@@ -115,11 +120,11 @@ public class AppUser {
         return "AppUser{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", encrypted_password='" + encrypted_password + '\'' +
+                ", encryptedPassword='" + encryptedPassword + '\'' +
                 ", email='" + email + '\'' +
                 ", createdDate=" + createdDate +
                 ", isActive=" + isActive +
-                ", subscription=" + subscription +
+                ", authority=" + authorities +
                 '}';
     }
 }
