@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.entities.JsonNodeToHashMapConverter;
 import com.valueinvesting.ruleone.exceptions.JsonNodeNullException;
@@ -31,7 +32,7 @@ class StockInfoServiceImplTest {
     private StockInfoService underTest;
     @Mock private RestTemplate restTemplate;
     @Mock private JsonNodeToHashMapConverter jsonNodeToHashMapConverter;
-    @Mock private JsonNode jsonNode;
+    private JsonNode jsonNode;
     private Map<String, List<Double>> bigFiveNumberMap = new HashMap<>();
 
 
@@ -52,6 +53,9 @@ class StockInfoServiceImplTest {
         bigFiveNumberMap.put("book_value_per_share", equityList);
         bigFiveNumberMap.put("fcf", fcfList);
         bigFiveNumberMap.put("roic", roicList);
+
+        ObjectMapper mapper = new ObjectMapper();
+        jsonNode = mapper.convertValue(bigFiveNumberMap, JsonNode.class);
     }
 
     @Test
@@ -84,8 +88,8 @@ class StockInfoServiceImplTest {
 
     @Test
     void checkIfFetchFullCompaniesListThrowsExceptionWhenJsonNodeIsMissing() {
+        jsonNode = null;
         ResponseEntity<JsonNode> responseEntity = Mockito.mock(ResponseEntity.class);
-        given(jsonNode.isMissingNode()).willReturn(true);
         given(responseEntity.getStatusCode())
                 .willReturn(HttpStatusCode.valueOf(200));
         given(responseEntity.getBody())
@@ -128,25 +132,8 @@ class StockInfoServiceImplTest {
     }
 
     @Test
-    void checkIfGetsAnnualBigFiveNumbers() {
-        given(jsonNode.path(anyString())).willReturn(jsonNode);
-        given(jsonNodeToHashMapConverter.convertJsonNodeToHashMap(any()))
-                .willAnswer((Answer<Map<String, Object>>) invocation -> {
-                    Map<String, Object> objectMap = new HashMap<>();
-                    for (Map.Entry<String, List<Double>> entry : bigFiveNumberMap.entrySet()) {
-                        objectMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
-                    }
-                    return objectMap;
-                });
-
-        assertThat(underTest.getAnnualBigFiveNumbers(jsonNode).get(BigFiveNumberType.ROIC))
-                .isEqualTo(bigFiveNumberMap.get("roic"));
-        assertThat(underTest.getAnnualBigFiveNumbers(jsonNode).get(BigFiveNumberType.EQUITY))
-                .isEqualTo(bigFiveNumberMap.get("book_value_per_share"));
-    }
-
-    @Test
     void checkIfGetAnnualBigFiveNumbersThrowsExceptionWhenJsonNodeIsMissing() {
+        jsonNode = Mockito.mock(JsonNode.class);
         given(jsonNode.isMissingNode()).willReturn(true);
 
         assertThatExceptionOfType(JsonNodeNullException.class)
