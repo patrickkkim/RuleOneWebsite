@@ -2,6 +2,7 @@ package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
 import com.valueinvesting.ruleone.entities.Authority;
+import com.valueinvesting.ruleone.entities.AuthorityType;
 import com.valueinvesting.ruleone.exceptions.UserAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.UserNotFoundException;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
@@ -20,10 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
@@ -177,6 +175,23 @@ class AppUserServiceIntegrationTest {
                 optional.get().getEncryptedPassword().replace("{bcrypt}", "")
         )).isTrue();
         assertThat("b@b.com").isEqualTo(optional.get().getEmail());
+    }
+
+    @Test
+    void checkIfUpdatesUserAuthority() {
+        underTest.createAppUser(appUser);
+        Authority authority1 = new Authority();
+        authority1.setAuthority(AuthorityType.ESSENTIAL);
+        authority1.setAppUser(appUser);
+        Authority authority2 = new Authority();
+        authority2.setAuthority(AuthorityType.ADMIN);
+        authority2.setAppUser(appUser);
+        Set<Authority> authorities = new HashSet<>(List.of(authority1, authority2));
+
+        underTest.updateUserAuthority(appUser.getId(), authorities);
+
+        Assertions.assertThat(appUserRepository.findByUsername(appUser.getUsername())
+                        .get().getAuthority()).hasSize(2);
     }
 
     @Test

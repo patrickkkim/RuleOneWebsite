@@ -1,6 +1,7 @@
 package com.valueinvesting.ruleone.services;
 
 import com.valueinvesting.ruleone.entities.AppUser;
+import com.valueinvesting.ruleone.entities.Authority;
 import com.valueinvesting.ruleone.exceptions.UserAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.UserNotFoundException;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
@@ -11,11 +12,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AppUserServiceImpl implements AppUserService {
@@ -37,6 +41,9 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public AppUser createAppUser(AppUser appUser) {
         appUser.setEncryptedPassword(encodePassword(appUser.getEncryptedPassword()));
+        Authority authority = new Authority();
+        authority.setAppUser(appUser);
+        appUser.setAuthority(new HashSet<>(List.of(authority)));
 
         Optional<AppUser> optionalById = appUserRepository.findById(appUser.getId());
         Optional<AppUser> optionalByUsername = appUserRepository.findByUsername(appUser.getUsername());
@@ -98,6 +105,15 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
+    @Transactional
+    @Override
+    public void updateUserAuthority(int id, Set<Authority> authorities) {
+        AppUser appUser = this.getAppUserById(id);
+        if (authorities.size() == 0) throw new IllegalArgumentException("Authority set must not be empty");
+        appUser.setAuthority(authorities);
+        appUserRepository.save(appUser);
+    }
+
     @Override
     public void activateUser(int id) {
         Optional<AppUser> optional = appUserRepository.findById(id);
@@ -131,6 +147,19 @@ public class AppUserServiceImpl implements AppUserService {
         else {
             throw new UserNotFoundException("User does not exist with ID: " + id);
         }
+    }
+
+    @Override
+    public void deleteAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username;
+        if (authentication != null && authentication.isAuthenticated()) {
+            username = authentication.getName();
+        }
+        else throw new BadCredentialsException("User is not authenticated");
+
+        AppUser appUser = this.getAppUserByUsername(username);
+        deleteUser(appUser.getId());
     }
 
     private String encodePassword(String plainText) {
