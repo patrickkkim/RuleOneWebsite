@@ -1,5 +1,6 @@
 package com.valueinvesting.ruleone.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -18,6 +19,7 @@ public class Authority {
             "ENUM('TRIAL', 'ESSENTIAL', 'PREMIUM', 'ADMIN') NOT NULL DEFAULT 'TRIAL'")
     private AuthorityType authority = AuthorityType.TRIAL;
 
+    @JsonBackReference
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="app_user_id", columnDefinition = "INT NOT NULL")

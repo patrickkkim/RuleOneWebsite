@@ -24,5 +24,7 @@ public interface AppUserService {
 
     void deleteAuthenticatedUser();
 
+    AppUser getAuthenticatedUser();
+
     String login(String username, String password);
 }

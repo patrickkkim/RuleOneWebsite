@@ -44,7 +44,7 @@ public class AppUser {
     private Instant createdDate = Instant.now();
 
     @Column(name="is_active", columnDefinition = "BOOLEAN NOT NULL DEFAULT 1")
-    private boolean isActive;
+    private boolean isActive = true;
 
     @NotNull
     @ManyToMany(cascade = CascadeType.ALL)
@@ -124,7 +124,6 @@ public class AppUser {
                 ", email='" + email + '\'' +
                 ", createdDate=" + createdDate +
                 ", isActive=" + isActive +
-                ", authority=" + authorities +
                 '}';
     }
 }
