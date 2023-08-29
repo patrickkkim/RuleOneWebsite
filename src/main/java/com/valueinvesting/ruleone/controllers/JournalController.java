@@ -32,6 +32,7 @@ public class JournalController {
         this.appUserService = appUserService;
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ESSENTIAL')")
     @PostMapping
     public ResponseEntity<?> createJournal(@RequestBody Map<String, Object> requestMap) {
         Journal journal = new Journal();

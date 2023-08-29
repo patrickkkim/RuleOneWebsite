@@ -9,9 +9,12 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface JournalService {
     Journal createJournal(@NotNull Journal journal);
+
+    Optional<Journal> getJournal(int journalId);
 
     Page<Journal> getPaginatedJournals(@NotNull AppUser appUser, int page, int size);
 

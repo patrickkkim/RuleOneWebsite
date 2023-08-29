@@ -50,7 +50,7 @@ class JournalControllerIntegrationTest {
         appUser.setEncryptedPassword("asdfasdfasdf123!");
         Authority authority = new Authority();
         authority.setAuthority(AuthorityType.ESSENTIAL);
-        authority.setAppUser(new HashSet<>(List.of(appUser)));
+        authority.setAppUser(appUser);
         appUser.setAuthority(new HashSet<>(List.of(authority)));
 
         journalMap = new HashMap<>();
