@@ -26,27 +26,28 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private AuthenticationProvider authenticationProvider;
     private JwtSecretProvider jwtSecretProvider;
+    private JwtAuthConverter jwtAuthConverter;
 
     @Autowired
-    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtSecretProvider jwtSecretProvider) {
+    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtSecretProvider jwtSecretProvider, JwtAuthConverter jwtAuthConverter) {
         this.authenticationProvider = authenticationProvider;
         this.jwtSecretProvider = jwtSecretProvider;
+        this.jwtAuthConverter = jwtAuthConverter;
     }
 
-    @Bean
-    public UserDetailsManager users(DataSource dataSource) {
-        JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
-        manager.setUsersByUsernameQuery(
-                "select username, encrypted_password, is_active from app_user where username=?");
-        manager.setAuthoritiesByUsernameQuery(
-                "select app_user_id, authority from authority where app_user_id=?");
-        return manager;
-    }
+//    @Bean
+//    public UserDetailsManager users(DataSource dataSource) {
+//        JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
+//        manager.setUsersByUsernameQuery(
+//                "select username, encrypted_password, is_active from app_user where username=?");
+//        manager.setAuthoritiesByUsernameQuery(
+//                "select app_user_id, authority from authority where app_user_id=?");
+//        return manager;
+//    }
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
@@ -70,10 +71,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
                         .requestMatchers("/user/login").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().hasAnyAuthority(
+                                "SCOPE_ESSENTIAL", "SCOPE_PREMIUM", "SCOPE_ADMIN")
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {
+                    jwt.decoder(jwtDecoder());
+                    jwt.jwtAuthenticationConverter(jwtAuthConverter);
+                }))
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
