@@ -71,6 +71,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
                         .requestMatchers("/user/login").permitAll()
+                        .requestMatchers("/journals/*").authenticated()
+                        .requestMatchers("/journals/**").authenticated()
                         .anyRequest().hasAnyAuthority(
                                 "SCOPE_ESSENTIAL", "SCOPE_PREMIUM", "SCOPE_ADMIN")
                 )

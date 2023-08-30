@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valueinvesting.ruleone.entities.*;
 import com.valueinvesting.ruleone.security.JwtUtil;
+import com.valueinvesting.ruleone.services.AppUserService;
 import com.valueinvesting.ruleone.services.JournalService;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,7 @@ class JournalControllerIntegrationTest {
     @Autowired private JwtUtil jwtUtil;
     @Autowired private EntityManager entityManager;
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private AppUserService appUserService;
     private AppUser appUser;
     private Map<String, Object> journalMap;
     private Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber;
@@ -48,10 +51,7 @@ class JournalControllerIntegrationTest {
         appUser.setUsername("honggildong");
         appUser.setEmail("a@a.com");
         appUser.setEncryptedPassword("asdfasdfasdf123!");
-        Authority authority = new Authority();
-        authority.setAuthority(AuthorityType.ESSENTIAL);
-        authority.setAppUser(appUser);
-        appUser.setAuthority(new HashSet<>(List.of(authority)));
+        appUserService.createAppUser(appUser);
 
         journalMap = new HashMap<>();
         journalMap.put("tickerSymbol", "META");
@@ -81,7 +81,6 @@ class JournalControllerIntegrationTest {
         jsonBigFiveNumber.put(BigFiveNumberType.FCF, (fcf));
 
         journalMap.put("jsonBigFiveNumber", jsonBigFiveNumber);
-        entityManager.persist(appUser);
         jwt = jwtUtil.generateToken(appUser.getUsername());
 
         for (int i = 0; i < 10; ++i) {
@@ -211,11 +210,140 @@ class JournalControllerIntegrationTest {
             entityManager.persist(journal);
         }
 
-        String response = mockMvc.perform(MockMvcRequestBuilders.get("/journals/AAPL")
+        String response = mockMvc.perform(MockMvcRequestBuilders.get(
+                "/journals/stocks/AAPL")
                 .header("Authorization", "Bearer " + jwt)
                 .param("page", "1")
                 .param("size", "1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn().getResponse().getContentAsString();
+
+        Map<String, Object> responseMap = objectMapper.readValue(response, new TypeReference<Map<String, Object>>() {});
+        List<Map<String, Object>> list = (List<Map<String, Object>>) responseMap.get("content");
+        assertThat(list.get(0).get("stockDate")).isEqualTo(journalList.get(1).getStockDate().toString());
+    }
+
+    @Test
+    void checkIfGetsStockPercentage() throws Exception {
+        for (Journal journal : journalList)
+            entityManager.persist(journal);
+
+        String response = mockMvc.perform(MockMvcRequestBuilders.get(
+                "/journals/percentages")
+                .header("Authorization", "Bearer " + jwt))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        Map<String, Double> percentages = objectMapper.readValue(response, new TypeReference<>() {});
+        assertThat(percentages.get("AAPL")).isCloseTo(0.125, Percentage.withPercentage(1));
+        assertThat(percentages.get("META")).isCloseTo(0.83333, Percentage.withPercentage(1));
+        assertThat(percentages.get("BABA")).isCloseTo(0.04166, Percentage.withPercentage(1));
+    }
+
+    @Test
+    void checkIfGetsTotalGainForEachStock() throws Exception {
+        for (Journal journal : journalList)
+            entityManager.persist(journal);
+
+        String response = mockMvc.perform(MockMvcRequestBuilders.get(
+                                "/journals/gains")
+                        .header("Authorization", "Bearer " + jwt))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        Map<String, Double> gains = objectMapper.readValue(response, new TypeReference<>() {});
+        assertThat(gains.get("META"))
+                .isCloseTo(63, Percentage.withPercentage(10));
+    }
+
+    @Test
+    void checkIfUpdatesBigFiveNumbers() throws Exception {
+        for (Journal journal : journalList)
+            entityManager.persist(journal);
+
+        Map<BigFiveNumberType, List<Double>> newBigFiveNumbers = new HashMap<>();
+        for (BigFiveNumberType type : BigFiveNumberType.values()) {
+            newBigFiveNumbers.put(type, new ArrayList<>());
+            for (int i = 10; i < 20; ++i) {
+                newBigFiveNumbers.get(type).add((double) i);
+            }
+        }
+
+        Map<String, Object> contentMap = new HashMap<>();
+        contentMap.put("jsonBigFiveNumber", newBigFiveNumbers);
+        String content = objectMapper.writeValueAsString(contentMap);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(
+                                "/journals/" + journalList.get(4).getId())
+                        .header("Authorization", "Bearer " + jwt)
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        entityManager.refresh(journalList.get(4));
+
+        assertThat(journalService.getJournal(journalList.get(4).getId()).get().getJsonBigFiveNumber())
+                .isEqualTo(newBigFiveNumbers);
+    }
+
+    @Test
+    void checkIfUpdatesBoth() throws Exception {
+        for (Journal journal : journalList)
+            entityManager.persist(journal);
+
+        Map<BigFiveNumberType, List<Double>> newBigFiveNumbers = new HashMap<>();
+        for (BigFiveNumberType type : BigFiveNumberType.values()) {
+            newBigFiveNumbers.put(type, new ArrayList<>());
+            for (int i = 10; i < 20; ++i) {
+                newBigFiveNumbers.get(type).add((double) i);
+            }
+        }
+        String newMemo = "This is a new memo.";
+
+        Map<String, Object> contentMap = new HashMap<>();
+        contentMap.put("jsonBigFiveNumber", newBigFiveNumbers);
+        contentMap.put("memo", newMemo);
+        String content = objectMapper.writeValueAsString(contentMap);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(
+                                "/journals/" + journalList.get(4).getId())
+                        .header("Authorization", "Bearer " + jwt)
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        entityManager.refresh(journalList.get(4));
+
+        assertThat(journalService.getJournal(journalList.get(4).getId()).get().getJsonBigFiveNumber())
+                .isEqualTo(newBigFiveNumbers);
+        assertThat(journalService.getJournal(journalList.get(4).getId()).get().getMemo())
+                .isEqualTo(newMemo);
+    }
+
+    @Test
+    void checkIfUpdateThrowsExceptionWhenUserIsDifferent() throws Exception {
+        AppUser newAppUser = new AppUser();
+        newAppUser.setUsername("newUser123");
+        newAppUser.setEmail("b@b.com");
+        newAppUser.setEncryptedPassword("asdfasdfasdf123!");
+        appUserService.createAppUser(newAppUser);
+        String newJwt = jwtUtil.generateToken(newAppUser.getUsername());
+
+        for (Journal journal : journalList)
+            entityManager.persist(journal);
+
+        String newMemo = "This is a new memo.";
+
+        Map<String, Object> contentMap = new HashMap<>();
+        contentMap.put("memo", newMemo);
+        String content = objectMapper.writeValueAsString(contentMap);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(
+                                "/journals/" + journalList.get(4).getId())
+                        .header("Authorization", "Bearer " + newJwt)
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is5xxServerError());
+
+        assertThat(journalService.getJournal(journalList.get(4).getId()).get().getMemo())
+                .isEqualTo("asdf");
     }
 }

@@ -25,17 +25,18 @@ public class JournalController {
 
     private JournalService journalService;
     private AppUserService appUserService;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public JournalController(JournalService journalService, AppUserService appUserService) {
+    public JournalController(JournalService journalService, AppUserService appUserService, ObjectMapper objectMapper) {
         this.journalService = journalService;
         this.appUserService = appUserService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping
     public ResponseEntity<?> createJournal(@RequestBody Map<String, Object> requestMap) {
         Journal journal = new Journal();
-        ObjectMapper objectMapper = new ObjectMapper();
         Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber;
         try {
             String jsonBigFiveNumberString = objectMapper.writeValueAsString(requestMap.get("jsonBigFiveNumber"));
@@ -98,18 +99,21 @@ public class JournalController {
     }
 
     @PutMapping("/{journalId}")
-    public ResponseEntity<?> updateBigFiveNumbers(@PathVariable int journalId,
-            @RequestBody Map<BigFiveNumberType, List<Double>> jsonBigFiveNumber,
-            @RequestBody String memo) {
+    public ResponseEntity<?> updateJournal(@PathVariable int journalId,
+            @RequestBody Map<String, Object> requestObject) throws Exception {
         AppUser appUser = appUserService.getAuthenticatedUser();
         Optional<Journal> optional = journalService.getJournal(journalId);
         if (optional.isPresent()) {
             Journal journal = optional.get();
             if (journal.getAppUser() == appUser) {
-                if (jsonBigFiveNumber != null)
-                    journalService.updateJsonBigFiveNumberByJournalId(journalId, jsonBigFiveNumber);
-                if (memo != null)
-                    journalService.updateMemoByJournalId(journalId, memo);
+                if (requestObject.containsKey("jsonBigFiveNumber")) {
+                    journalService.updateJsonBigFiveNumberByJournalId(journalId,
+                            objectMapper.readValue(
+                                    objectMapper.writeValueAsString(requestObject.get("jsonBigFiveNumber")),
+                                    new TypeReference<>(){}));
+                }
+                if (requestObject.containsKey("memo"))
+                    journalService.updateMemoByJournalId(journalId, (String) requestObject.get("memo"));
             } else throw new IllegalArgumentException("Current user is not authorized to update this journal");
         } else throw new IllegalArgumentException("Journal does not exist to update");
         return ResponseEntity.ok(true);
