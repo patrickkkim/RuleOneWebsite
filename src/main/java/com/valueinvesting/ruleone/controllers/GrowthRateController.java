@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valueinvesting.ruleone.entities.BigFiveNumberType;
 import com.valueinvesting.ruleone.services.GrowthRateService;
+import com.valueinvesting.ruleone.services.StockInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,13 @@ import java.util.Map;
 public class GrowthRateController {
 
     private GrowthRateService growthRateService;
+    private StockInfoService stockInfoService;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public GrowthRateController(GrowthRateService growthRateService, ObjectMapper objectMapper) {
+    public GrowthRateController(GrowthRateService growthRateService, StockInfoService stockInfoService, ObjectMapper objectMapper) {
         this.growthRateService = growthRateService;
+        this.stockInfoService = stockInfoService;
         this.objectMapper = objectMapper;
     }
 
