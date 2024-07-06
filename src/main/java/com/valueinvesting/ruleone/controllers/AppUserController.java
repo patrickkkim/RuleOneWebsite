@@ -1,15 +1,12 @@
 package com.valueinvesting.ruleone.controllers;
 
 import com.valueinvesting.ruleone.entities.AppUser;
-import com.valueinvesting.ruleone.exceptions.ErrorResponse;
 import com.valueinvesting.ruleone.services.AppUserService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -25,7 +22,7 @@ public class AppUserController {
     }
 
     private void validateAppUser(AppUser appUser) {
-        if (appUser.getUsername().length() < 6)
+        if (appUser.getUsername() != null && appUser.getUsername().length() < 6)
             throw new RuntimeException("Username must be longer than 5");
         if (!Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$")
                 .matcher(appUser.getEncryptedPassword()).find()) {
@@ -37,28 +34,31 @@ public class AppUserController {
     public ResponseEntity<?> createAppUser(@RequestBody @NotNull AppUser appUser) {
         validateAppUser(appUser);
         AppUser newAppUser = appUserService.createAppUser(appUser);
-        newAppUser.setEncryptedPassword(null);
+        newAppUser.setEncryptedPassword("null");
         return ResponseEntity.ok(newAppUser);
     }
 
     @PutMapping()
     public ResponseEntity<?> updateAppUser(@RequestBody @NotNull AppUser appUser) {
-        validateAppUser(appUser);
-        if (!appUser.getEncryptedPassword().contains("{bcrypt}")) {
+        if (appUser.getEncryptedPassword() == null ||
+                appUser.getEncryptedPassword().contains("{bcrypt}")) {
             appUser.setEncryptedPassword(null);
         }
-        appUserService.updateUser(appUser.getId(), appUser.getEncryptedPassword(), appUser.getEmail());
+        else {
+            validateAppUser(appUser);
+        }
+        appUserService.updateUser(appUserService.getAuthenticatedUser().getId(),
+                appUser.getEncryptedPassword(), appUser.getEmail());
         return ResponseEntity.ok(true);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @NotNull Map<String, String> loginForm) {
-        String jwt = appUserService.login(
-                loginForm.get("username"), loginForm.get("password"));
+        String jwt = appUserService.login(loginForm.get("username"), loginForm.get("password"));
         return ResponseEntity.ok(jwt);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping()
     public ResponseEntity<?> deleteAppUser() {
         appUserService.deleteAuthenticatedUser();
         return ResponseEntity.ok(true);

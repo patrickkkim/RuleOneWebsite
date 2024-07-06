@@ -6,12 +6,14 @@ import com.valueinvesting.ruleone.exceptions.UserAlreadyExistException;
 import com.valueinvesting.ruleone.exceptions.UserNotFoundException;
 import com.valueinvesting.ruleone.repositories.AppUserRepository;
 import com.valueinvesting.ruleone.security.JwtUtil;
+import io.jsonwebtoken.Jwt;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -151,15 +153,20 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public void deleteAuthenticatedUser() {
+        AppUser appUser = this.getAuthenticatedUser();
+        deleteUser(appUser.getId());
+    }
+
+    @Override
+    public AppUser getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username;
         if (authentication != null && authentication.isAuthenticated()) {
             username = authentication.getName();
         }
-        else throw new BadCredentialsException("User is not authenticated");
+        else throw new BadCredentialsException("User is not authenticated!");
 
-        AppUser appUser = this.getAppUserByUsername(username);
-        deleteUser(appUser.getId());
+        return this.getAppUserByUsername(username);
     }
 
     private String encodePassword(String plainText) {

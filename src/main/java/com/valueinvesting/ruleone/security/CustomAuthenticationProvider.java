@@ -1,6 +1,5 @@
 package com.valueinvesting.ruleone.security;
 
-import com.valueinvesting.ruleone.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,8 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -42,6 +39,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         // Have to change when third-party authentication is implemented?
         return new UsernamePasswordAuthenticationToken(name, password, userDetails.getAuthorities());
+
     }
 
     @Override

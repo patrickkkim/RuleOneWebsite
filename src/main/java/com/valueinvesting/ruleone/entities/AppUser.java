@@ -22,19 +22,20 @@ public class AppUser {
     @NotNull
     @Size(min=5)
     @Column(name="username", columnDefinition =
-            "VARCHAR(50) NOT NULL UNIQUE CHECK (LENGTH() >= 5)")
+            "VARCHAR(50) NOT NULL UNIQUE")
     private String username;
 
     @NotBlank
+    @Size(min=10)
     @Column(name="encrypted_password",
-            columnDefinition = "VARCHAR(100) NOT NULL CHECK (LENGTH() >= 10)")
+            columnDefinition = "VARCHAR(100) NOT NULL")
     private String encryptedPassword;
 
     @NotNull
     @Size(min=4)
     @Email
     @Column(name="email", columnDefinition =
-            "VARCHAR(255) NOT NULL CHECK (LENGTH() >= 4)")
+            "VARCHAR(255) NOT NULL")
     private String email;
 
     @NotNull
@@ -44,7 +45,7 @@ public class AppUser {
     private Instant createdDate = Instant.now();
 
     @Column(name="is_active", columnDefinition = "BOOLEAN NOT NULL DEFAULT 1")
-    private boolean isActive;
+    private boolean isActive = true;
 
     @NotNull
     @ManyToMany(cascade = CascadeType.ALL)
@@ -124,7 +125,6 @@ public class AppUser {
                 ", email='" + email + '\'' +
                 ", createdDate=" + createdDate +
                 ", isActive=" + isActive +
-                ", authority=" + authorities +
                 '}';
     }
 }

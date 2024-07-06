@@ -1,28 +1,33 @@
 package com.valueinvesting.ruleone.security;
 
+import com.valueinvesting.ruleone.services.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil implements JwtSecretProvider {
 
     private byte[] secret;
     private final int expirationTime = 50 * 60 * 60 * 10;
+    private CustomUserDetailsService customUserDetailsService;
 
-    public JwtUtil() {
+    @Autowired
+    public JwtUtil(CustomUserDetailsService customUserDetailsService) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         secret = Keys.secretKeyFor(signatureAlgorithm).getEncoded();
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
@@ -31,19 +36,31 @@ public class JwtUtil implements JwtSecretProvider {
     }
 
     public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+        return createToken(userDetails);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(UserDetails userDetails) {
+        List<String> authorities = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
+                .claim("authorities", createAuthorityMap(authorities))
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(Keys.hmacShaKeyFor(secret),
                         SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private Object createAuthorityMap(List<String> scopes) {
+        return scopes.stream().collect(Collectors.toMap(
+                scope -> "authority",
+                scope -> new String[]{scope}
+        ));
     }
 
     public String extractUsername(String token) {

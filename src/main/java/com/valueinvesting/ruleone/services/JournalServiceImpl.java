@@ -48,6 +48,11 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
+    public Optional<Journal> getJournal(int journalId) {
+        return journalRepository.findById(journalId);
+    }
+
+    @Override
     public Page<Journal> getPaginatedJournals(@NotNull AppUser appUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return journalRepository.findJournalByAppUserIdOrderByStockDateDesc(
