@@ -12,7 +12,10 @@ FROM amazoncorretto:17-alpine3.19
 WORKDIR /usr/src/app
 
 COPY --from=build /usr/src/app/target/*.jar app.jar
-COPY ./docker .
 EXPOSE 8080
+
+RUN adduser --disabled-password --gecos "" appuser\
+ && chown appuser .
+USER appuser
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

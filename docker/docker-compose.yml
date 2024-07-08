@@ -1,7 +1,8 @@
 version: '3.8'
 
 services:
-  app:
+  backend:
+    container_name: ruleone-backend
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -22,6 +23,7 @@ services:
   db:
     image: mysql:8.0
     restart: always
+    container_name: ruleone-db
     environment:
       - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_NAME}
