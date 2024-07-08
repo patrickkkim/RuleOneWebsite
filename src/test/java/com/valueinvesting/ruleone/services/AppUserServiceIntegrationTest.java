@@ -45,7 +45,7 @@ class AppUserServiceIntegrationTest {
         appUser = new AppUser();
         appUser.setUsername("honggildong");
         appUser.setEmail("a@a.com");
-        appUser.setEncryptedPassword("test123");
+        appUser.setEncryptedPassword("test123test123");
         Authority authority = new Authority();
         authority.setAppUser(appUser);
         appUser.setAuthority(new HashSet<>(List.of(authority)));
@@ -67,7 +67,7 @@ class AppUserServiceIntegrationTest {
         Optional<AppUser> optional = appUserRepository.findById(appUser.getId());
 
         assertThat(bCryptPasswordEncoder.matches(
-                "test123",
+                "test123test123",
                 optional.get().getEncryptedPassword().replace("{bcrypt}", "")))
                 .isTrue();
     }
@@ -87,7 +87,7 @@ class AppUserServiceIntegrationTest {
         AppUser newUser = new AppUser();
         newUser.setUsername("honggildong");
         newUser.setEmail("a@a.com");
-        newUser.setEncryptedPassword("test123");
+        newUser.setEncryptedPassword("test123test123");
         underTest.createAppUser(appUser);
 
         assertThatExceptionOfType(UserAlreadyExistException.class)
@@ -245,7 +245,7 @@ class AppUserServiceIntegrationTest {
         underTest.createAppUser(appUser);
         entityManager.refresh(appUser);
 
-        String jwt = underTest.login("honggildong", "test123");
+        String jwt = underTest.login("honggildong", "test123test123");
         assertThat(jwtUtil.extractUsername(jwt)).isEqualTo("honggildong");
     }
 
@@ -255,6 +255,6 @@ class AppUserServiceIntegrationTest {
         entityManager.refresh(appUser);
 
         assertThatExceptionOfType(BadCredentialsException.class)
-                .isThrownBy(() -> underTest.login("honggildong", "123123"));
+                .isThrownBy(() -> underTest.login("honggildong", "123123123123"));
     }
 }

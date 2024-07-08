@@ -34,7 +34,7 @@ public class AppUserController {
     public ResponseEntity<?> createAppUser(@RequestBody @NotNull AppUser appUser) {
         validateAppUser(appUser);
         AppUser newAppUser = appUserService.createAppUser(appUser);
-        newAppUser.setEncryptedPassword("null");
+        newAppUser.setEncryptedPassword("nullnullnullnullnull");
         return ResponseEntity.ok(newAppUser);
     }
 
