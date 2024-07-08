@@ -1,11 +1,17 @@
 FROM maven:3.9.8-amazoncorretto-17 AS build
 
 WORKDIR /usr/src/app
+ARG SKIP_TEST
+ARG FS_API_KEY
 
 COPY ../pom.xml .
 COPY ../src ./src
 COPY ./docker .
-RUN mvn package -Dmaven.test.skip=true
+RUN if ["$SKIPTEST" = "false"]; then \
+    mvn package -Dmaven.test.skip=${SKIP_TEST} -Dfs.api.key=${FS_API_KEY}; \
+else \
+    mvn package -Dmaven.test.skip=${SKIP_TEST}; \
+fi
 
 FROM amazoncorretto:17-alpine3.19
 
