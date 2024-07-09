@@ -20,8 +20,11 @@ WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/target/*.jar app.jar
 EXPOSE 8080
 
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh ./waitforit.sh
+RUN chmod +x ./waitforit.sh
+
 RUN adduser --disabled-password --gecos "" appuser\
  && chown appuser .
 USER appuser
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["./waitforit.sh", "main:3306", "java", "-jar", "app.jar"]
