@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    image: ruleone-backend:latest
     container_name: ruleone-backend
     build:
       context: ..
