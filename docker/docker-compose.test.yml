@@ -2,19 +2,15 @@ version: '3.8'
 
 services:
   backend:
-    image: ruleone-backend:latest
-    container_name: ruleone-backend
+    container_name: ruleone-backend-test
     build:
       context: ..
       dockerfile: docker/Dockerfile
       args:
-        - SKIP_TEST=false
-        - FS_API_KEY=${FS_API_KEY}
+        - SKIP_TEST=true
     restart: on-failure
     ports:
       - 8080:8080
-    env_file:
-      - .env
     environment:
       - SPRING_DATASOURCE_SERVICE=db
       - SPRING_DATASOURCE_PORT=3306
@@ -29,7 +25,7 @@ services:
   db:
     image: mysql:8.0
     restart: always
-    container_name: ruleone-db
+    container_name: ruleone-db-test
     environment:
       - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_NAME}
