@@ -8,7 +8,7 @@ services:
       dockerfile: docker/Dockerfile
       args:
         - SKIP_TEST=true
-    restart: on-failure
+        - FS_API_KEY=${FS_API_KEY}
     ports:
       - 8080:8080
     environment:
@@ -18,21 +18,12 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
       - FS_API_KEY=${FS_API_KEY}
-    depends_on:
-      db:
-        condition: service_healthy
 
   db:
     image: mysql:8.0
-    restart: always
     container_name: ruleone-db-test
     environment:
       - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_NAME}
       - MYSQL_USER=${DATABASE_USERNAME}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 2s
-      timeout: 20s
-      retries: 10
