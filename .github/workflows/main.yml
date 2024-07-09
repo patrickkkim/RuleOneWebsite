@@ -17,11 +17,11 @@ jobs:
         with:
           email: ${{ secrets.HEROKU_EMAIL }}
           api_key: ${{ secrets.HEROKU_API_KEY }}
-          docker_compose-file: "./docker/docker-compose.yml"
+          docker_compose_file: "./docker/docker-compose.yml"
           heroku_apps: '[{"imagename":"ruleone-backend","appname":"ruleonewebsite","apptype":"web"},{"imagename":"mysql","appname":"ruleonewebsite","apptype":"web"}]'
         env:
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
           DATABASE_ROOT_PASSWORD: ${{ secrets.DATABASE_ROOT_PASSWORD }}
-          FS_API_KEY: ${{ FS_API_KEY }}
+          FS_API_KEY: ${{ secrets.FS_API_KEY }}
