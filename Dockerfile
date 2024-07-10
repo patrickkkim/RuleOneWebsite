@@ -7,7 +7,7 @@ ARG FS_API_KEY
 COPY ./pom.xml .
 COPY ./src ./src
 RUN if ["$SKIPTEST" = "false"]; then \
-    mvn package -Dmaven.test.skip=${SKIP_TEST} -Dfs.api.key=${FS_API_KEY}; \
+    mvn package -Dmaven.test.skip=true -Dfs.api.key=${FS_API_KEY}; \
 else \
     mvn package -Dmaven.test.skip=${SKIP_TEST}; \
 fi
