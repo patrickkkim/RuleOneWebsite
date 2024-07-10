@@ -12,21 +12,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set Heroku env Variables
-        env:
-          $DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          $DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-          FS_API_KEY: ${{ secrets.FS_API_KEY }}
-        run: echo ${{ secrets.HEROKU_API_KEY }} | docker login --username=_ --password-stdin registry.heroku.com |
-          heroku config:set SPRING_DATASOURCE_SERVICE=$DATABASE_HOST SPRING_DATASOURCE_DBNAME=$DATABASE_NAME \
-          SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD \
-          FS_API_KEY=$FS_API_KEY --app $HEROKU_APP_NAME
-
       - name: Build and Push and Release to Heroku
-        uses: gonuit/heroku-docker-deploy@v1.3.3
+        uses: patrickkkim/heroku-docker-deploy@v1.1
         with:
           email: ${{ secrets.HEROKU_EMAIL }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
@@ -34,3 +21,8 @@ jobs:
           dockerfile_directory: ./
           options: "--no-cache"
           process_type: web
+          db_host: ${{ secrets.DATABASE_HOST }}
+          db_name: ${{ secrets.DATABASE_NAME }}
+          db_username: ${{ secrets.DATABASE_USERNAME }}
+          db_password: ${{ secrets.DATABASE_PASSWORD }}
+          fs_api_key: ${{ secrets.FS_API_KEY }}
