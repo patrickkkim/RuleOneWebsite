@@ -2,7 +2,7 @@ name: App Release With Docker to Heroku
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "main" ]
 
 jobs:
   build:
