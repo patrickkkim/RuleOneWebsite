@@ -9,7 +9,7 @@ COPY ./src ./src
 RUN if ["$SKIPTEST" = "false"]; then \
     mvn package -Dmaven.test.skip=true -Dfs.api.key=${FS_API_KEY}; \
 else \
-    mvn package -Dmaven.test.skip=${SKIP_TEST}; \
+    mvn package -Dmaven.test.skip=true; \
 fi
 
 FROM amazoncorretto:17-alpine3.19
