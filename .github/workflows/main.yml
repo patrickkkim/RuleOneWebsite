@@ -18,6 +18,7 @@ jobs:
           $DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
           FS_API_KEY: ${{ secrets.FS_API_KEY }}
         run: |
           heroku config:set SPRING_DATASOURCE_SERVICE=$DATABASE_HOST SPRING_DATASOURCE_DBNAME=$DATABASE_NAME \
