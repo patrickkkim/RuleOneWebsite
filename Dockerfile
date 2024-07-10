@@ -4,8 +4,8 @@ WORKDIR /usr/src/app
 ARG SKIP_TEST
 ARG FS_API_KEY
 
-COPY ../pom.xml .
-COPY ../src ./src
+COPY ./pom.xml .
+COPY ./src ./src
 RUN if ["$SKIPTEST" = "false"]; then \
     mvn package -Dmaven.test.skip=${SKIP_TEST} -Dfs.api.key=${FS_API_KEY}; \
 else \
