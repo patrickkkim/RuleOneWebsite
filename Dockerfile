@@ -4,13 +4,12 @@ WORKDIR /usr/src/app
 ARG SKIP_TEST
 ARG FS_API_KEY
 
-COPY ../pom.xml .
-COPY ../src ./src
-COPY ./docker .
+COPY ./pom.xml .
+COPY ./src ./src
 RUN if ["$SKIPTEST" = "false"]; then \
-    mvn package -Dmaven.test.skip=${SKIP_TEST} -Dfs.api.key=${FS_API_KEY}; \
+    mvn package -Dmaven.test.skip=true -Dfs.api.key=${FS_API_KEY}; \
 else \
-    mvn package -Dmaven.test.skip=${SKIP_TEST}; \
+    mvn package -Dmaven.test.skip=true; \
 fi
 
 FROM amazoncorretto:17-alpine3.19
