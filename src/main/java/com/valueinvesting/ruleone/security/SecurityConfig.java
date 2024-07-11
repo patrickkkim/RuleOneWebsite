@@ -76,7 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/journals/*").authenticated()
                         .requestMatchers("/journals/**").authenticated()
                         .anyRequest().hasAnyAuthority(
-                                "SCOPE_ESSENTIAL", "SCOPE_PREMIUM", "SCOPE_ADMIN")
+                                "SCOPE_ESSENTIAL", "SCOPE_PREMIUM", "SCOPE_ADMIN", "SCOPE_TRIAL")
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {
